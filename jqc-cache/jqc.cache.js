@@ -34,7 +34,7 @@
             param: null // param to fetch data
         }
     };
-    
+
     const DB_NAME = 'jqcCacheDatabase';
     const DB_DATA_EXPIRY_TIMESTAMP = '__expiryTimestamp__';
 
@@ -62,20 +62,31 @@
             context: this
         });
 
+        var keySetting = null;
+        if (typeof (_options.key) == 'string') {
+            keySetting = function (data, cache, key) {
+                for (var i in data) {
+                    var item = data[i];
+                    cache.set(item[key], item);
+                }
+            };
+        } else {
+            keySetting = function (data, cache, key) {
+                for (var i in data) {
+                    var item = data[i];
+                    cache.set(key(item), item);
+                }
+            };
+        }
         var cache = new CacheMap(_options);
         if (this.isInitialled) {
-            for (var i in this.data) {
-                var data = this.data[i];
-                cache.set(param.call(this, data), data);
-            }
+            keySetting(this.data, cache, key);
 
             return cache;
         } else {
             init(this, function (data) {
-                for (var i in data) {
-                    var _data = this.data[i];
-                    cache.set(param.call(_data), _data);
-                }
+                keySetting(data, cache, key);
+                callback();
             });
         }
     };
