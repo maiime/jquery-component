@@ -15,7 +15,6 @@
             param: null, // parameter for querying data
             parseFun: null // parse function to fetch data from request result
         },
-        patchUrl: null, // patch new data into cache through common or special patchUrl
         localstorage: {
             delay: 1000, // data be pushed to local database in delay time
             expiryTime: false, // data is or not expiry in data, if it will be expiry, how long will be valid
@@ -25,6 +24,17 @@
             enable: false // enable local storage
         }
     };
+
+    const CACHE_BUILD_DEFAULT_OPTIONS = {
+        key: null, // 'string' or function
+        patch: {
+            enable: false,
+            url: null, // patch new data into cache through url
+            parseFun: null, // parse function to fetch data from request result
+            param: null // param to fetch data
+        }
+    };
+    
     const DB_NAME = 'jqcCacheDatabase';
     const DB_DATA_EXPIRY_TIMESTAMP = '__expiryTimestamp__';
 
@@ -47,43 +57,27 @@
         }
     };
 
-    $.jqcCache.prototype.build = function (options) {
-        var _this = this;
-        var cache = null;
+    $.jqcCache.prototype.build = function (options, callback) {
+        var _options = $.extend(true, CACHE_BUILD_DEFAULT_OPTIONS, options, {
+            context: this
+        });
 
-        if ('string' == typeof (param)) {
-            cache = new CacheMap({
-                context: _this
-            });
-            for (var i in _this.data) {
-                var data = _this.data[i];
-                cache.set(data[param], data);
+        var cache = new CacheMap(_options);
+        if (this.isInitialled) {
+            for (var i in this.data) {
+                var data = this.data[i];
+                cache.set(param.call(this, data), data);
             }
-        } else if ('function' == typeof (param)) {
-            cache = new CacheMap({
-                context: _this
-            });
-            for (var i in _this.data) {
-                var data = _this.data[i];
-                cache.set(param.call(_this, data), data);
-            }
-        } else if ('object' == typeof (param)) {
-            cache = new CacheMap({
-                context: _this,
-                packData: param.packParam
-            });
-            for (var i in _this.data) {
-                var data = _this.data[i];
-                var key = param.packKey;
-                if ('string' == typeof (key)) {
-                    cache.set(data[key], data);
-                } else if ('function' == typeof (key)) {
-                    cache.set(key.call(_this, data), data);
+
+            return cache;
+        } else {
+            init(this, function (data) {
+                for (var i in data) {
+                    var _data = this.data[i];
+                    cache.set(param.call(_data), _data);
                 }
-            }
+            });
         }
-
-        return cache;
     };
 
     $.jqcCache.prototype.isInitialled = function () {
@@ -142,6 +136,57 @@
         }
     }
 
+    function CacheMap(options) {
+        this.map = new Map();
+        this.options = options;
+    }
+
+    CacheMap.prototype.get = function (key) {
+        if ($.trim(key).length == 0) {
+            return null;
+        }
+
+        var _this = this;
+        if (_this.map.has(key)) {
+            return _this.map.get(key);
+        } else {
+            if (_this.options.patch.enable) {
+                var data = null;
+                $.ajax({
+                    url: _this.options.patch.url,
+                    method: 'GET',
+                    data: _this.options.patch.param(key),
+                    async: false,
+                    success: function (resp) {
+                        if (_this.options.patch.parseFun) {
+                            data = _this.options.patch.parseFun(resp);
+                        } else {
+                            data = resp;
+                        }
+                        context.data.push(data);
+                        _this.map.set(key, data);
+
+                        if (_this.options.context.localstorage.enable) {
+                            setTimeout(function () {
+                                updateStore(_this.options.context.options.name, _this.options.context.localstorage.primaryKey, data);
+                            }, _this.options.context.localstorage.delay);
+                        }
+                    }
+                });
+                return data;
+            } else {
+                return null;
+            }
+        }
+    };
+
+    CacheMap.prototype.set = function (key, val) {
+        this.map.set(key, val);
+    };
+
+    /**
+     * after initialled, update the expiried item
+     */
     function refreshLocalstorage(context) {
         if (!context.localstorage.expiryTime || !context.localstorage.refreshUrl) {
             return;
@@ -158,6 +203,7 @@
                 param[context.localstorage.primaryKey] = item[context.localstorage.primaryKey];
                 $.ajax({
                     url: context.localstorage.refreshUrl,
+                    method: 'GET',
                     data: param,
                     async: false,
                     success: function (resp) {
@@ -177,6 +223,7 @@
         if ($.trim(context.init.url).length > 0) {
             var ajaxOptions = {
                 url: context.init.url,
+                method: 'GET',
                 async: false,
                 success: function (resp) {
                     if (context.init.parseFun) {
