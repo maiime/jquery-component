@@ -80,12 +80,12 @@
         }
         var cache = new CacheMap(_options);
         if (this.isInitialled) {
-            keySetting(this.data, cache, key);
+            keySetting(this.data, cache, _options.key);
 
             return cache;
         } else {
             init(this, function (data) {
-                keySetting(data, cache, key);
+                keySetting(data, cache, _options.key);
                 callback();
             });
         }
@@ -174,13 +174,14 @@
                         } else {
                             data = resp;
                         }
+                        var context = _this.options.context;
                         context.data.push(data);
                         _this.map.set(key, data);
 
-                        if (_this.options.context.localstorage.enable) {
+                        if (context.options.localstorage.enable) {
                             setTimeout(function () {
-                                updateStore(_this.options.context.options.name, _this.options.context.localstorage.primaryKey, data);
-                            }, _this.options.context.localstorage.delay);
+                                updateStore(context.options.name, context.options.localstorage.primaryKey, data);
+                            }, context.options.localstorage.delay);
                         }
                     }
                 });
