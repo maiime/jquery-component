@@ -11,13 +11,16 @@
         init: {
             immediate: false, // setup the cache immediatelly
             data: null, // object array to initial cache
-            url: null // if not provide object array as above, fetch data through url
+            url: null, // if not provide object array as above, fetch data through url
+            param: null, // parameter for querying data
+            parseFun: null // parse function to fetch data from request result
         },
         patchUrl: null, // patch new data into cache through common or special patchUrl
         localstorage: {
             delay: 1000, // data be pushed to local database in delay time
             expiryTime: false, // data is or not expiry in data, if it will be expiry, how long will be valid
             refreshUrl: null, // when a data is expiry, refresh data through refreshUrl
+            parseFun: null, // parse function to fetch data from request result
             primaryKey: null, // primary key for data
             enable: false // enable local storage
         }
@@ -84,28 +87,124 @@
     };
 
     $.jqcCache.prototype.isInitialled = function () {
-        return this.unfinishedInit == false;
+        return this.initialled;
     };
 
-    $.jqcCache.prototype.queryAll = function () {
-        return this.data;
+    $.jqcCache.prototype.queryAll = function (callback) {
+        if (this.isInitialled()) {
+            if (callback) {
+                callback(this.data);
+            }
+            return this.data;
+        } else {
+            init(this, callback);
+        }
     };
 
-    function init(context) {
+    function init(context, callback) {
         var data = context.options.init.data;
         if ($.isArray(data)) {
             context.data = data;
             context.initialled = true;
-        } else if ($.trim(url).length > 0) {
-
-        } else {
+            if (callback) {
+                callback(context.data);
+            }
             return;
         }
 
         if (context.localstorage.enable) {
-            setTimeout(function () {
-                updateStore(context.options.name, context.localstorage.primaryKey, context.data);
-            }, context.localstorage.delay);
+            var req = indexedDB.open(DB_NAME);
+            req.onsuccess = function (event) {
+                var db = event.target.result;
+                if (db.objectStoreNames.contains(context.name)) {
+                    var dataReq = db.transaction(context.name, 'readonly').objectStore(context.name).getAll();
+                    dataReq.onsuccess = function (event) {
+                        var data = event.target.result;
+                        if (data.length > 0) {
+                            context.data = data;
+                            context.initialled = true;
+
+                            if (callback) {
+                                callback(context.data);
+                            }
+
+                            refreshLocalstorage(context);
+                        } else {
+                            initCacheWithRemoteData(context, callback);
+                        }
+                    };
+                } else {
+                    initCacheWithRemoteData(context, callback);
+                }
+            };
+        } else {
+            initCacheWithRemoteData(context, callback);
+        }
+    }
+
+    function refreshLocalstorage(context) {
+        if (!context.localstorage.expiryTime || !context.localstorage.refreshUrl) {
+            return;
+        }
+        var data = context.data;
+        var need2BeRefreshed = [];
+        for (var i in data) {
+            var item = data[i];
+            var expiryTime = item[DB_DATA_EXPIRY_TIMESTAMP];
+            if (expiryTime && expiryTime > Date.now()) {
+                continue;
+            } else {
+                var param = {};
+                param[context.localstorage.primaryKey] = item[context.localstorage.primaryKey];
+                $.ajax({
+                    url: context.localstorage.refreshUrl,
+                    data: param,
+                    async: false,
+                    success: function (resp) {
+                        if (context.localstorage.parseFun) {
+                            need2BeRefreshed.push(context.localstorage.parseFun(resp));
+                        } else {
+                            need2BeRefreshed.push(resp);
+                        }
+                    }
+                });
+            }
+        }
+        updateStore(context.options.name, context.localstorage.primaryKey, need2BeRefreshed);
+    }
+
+    function initCacheWithRemoteData(context, callback) {
+        if ($.trim(context.init.url).length > 0) {
+            var ajaxOptions = {
+                url: context.init.url,
+                async: false,
+                success: function (resp) {
+                    if (context.init.parseFun) {
+                        context.data = context.init.parseFun(resp);
+                    } else {
+                        context.data = resp;
+                    }
+
+                    context.initialled = true;
+                    if (callback) {
+                        callback(context.data);
+                    }
+
+                    if (context.localstorage.enable) {
+                        setTimeout(function () {
+                            updateStore(context.options.name, context.localstorage.primaryKey, context.data);
+                        }, context.localstorage.delay);
+                    }
+                }
+            };
+            if (context.init.param) {
+                ajaxOptions = $.extend(true, ajaxOptions, {
+                    data: context.init.param
+                });
+            }
+            $.ajax(ajaxOptions);
+        } else {
+            return;
         }
     }
 
