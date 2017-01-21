@@ -47,12 +47,12 @@
             throw new Error("cache name cann't be null");
         }
         if (ExistCache.has(this.options.name)) {
-            throw new Error('duplicate cache :'.concat(this.options.name));
+            return ExistCache.get(this.options.name);
         } else {
             ExistCache.set(this.options.name, 0);
         }
 
-        if (this.options.immediate) {
+        if (this.options.init.immediate) {
             init(this);
         }
     };
@@ -117,12 +117,12 @@
             return;
         }
 
-        if (context.localstorage.enable) {
+        if (context.options.localstorage.enable) {
             var req = indexedDB.open(DB_NAME);
             req.onsuccess = function (event) {
                 var db = event.target.result;
-                if (db.objectStoreNames.contains(context.name)) {
-                    var dataReq = db.transaction(context.name, 'readonly').objectStore(context.name).getAll();
+                if (db.objectStoreNames.contains(context.options.name)) {
+                    var dataReq = db.transaction(context.options.name, 'readonly').objectStore(context.options.name).getAll();
                     dataReq.onsuccess = function (event) {
                         var data = event.target.result;
                         if (data.length > 0) {
@@ -232,14 +232,14 @@
     }
 
     function initCacheWithRemoteData(context, callback) {
-        if ($.trim(context.init.url).length > 0) {
+        if ($.trim(context.options.init.url).length > 0) {
             var ajaxOptions = {
-                url: context.init.url,
+                url: context.options.init.url,
                 method: 'GET',
                 async: false,
                 success: function (resp) {
-                    if (context.init.parseFun) {
-                        context.data = context.init.parseFun(resp);
+                    if (context.options.init.parseFun) {
+                        context.data = context.options.init.parseFun(resp);
                     } else {
                         context.data = resp;
                     }
@@ -249,14 +249,14 @@
                         callback(context.data);
                     }
 
-                    if (context.localstorage.enable) {
+                    if (context.options.localstorage.enable) {
                         setTimeout(function () {
-                            updateStore(context.options.name, context.localstorage.primaryKey, context.data);
-                        }, context.localstorage.delay);
+                            updateStore(context.options.name, context.options.localstorage.primaryKey, context.data);
+                        }, context.options.localstorage.delay);
                     }
                 }
             };
-            if (context.init.param) {
+            if (context.options.init.param) {
                 ajaxOptions = $.extend(true, ajaxOptions, {
                     data: context.init.param
                 });
