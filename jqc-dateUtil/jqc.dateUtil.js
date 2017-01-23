@@ -7,13 +7,20 @@
     const TIME_EXP_REGEXP = /^([-+]?\d+Y)?([-+]?\d+M)?([-+]?\d+D)?([-+]?\d+H)?$/i;
 
     $.jqcDateUtil = {
-        toMilliSeconds: function (date) {
+        toMilliSeconds: function (date, onlyKeepDate) {
+            var _date;
             if (typeof (date) == 'string') {
-                return new Date(date).getTime();
+                _date = new Date(date).getTime();
             } else if (typeof (date) == 'number') {
-                return date;
+                _date = date;
             } else {
-                return date.getTime();
+                _date = date.getTime();
+            }
+
+            if (onlyKeepDate) {
+                return _date - (_date - 57600000) % ONE_DAY_IN_MILLISECONDS;
+            } else {
+                return _date;
             }
         },
         toDate: function (date) {
@@ -92,6 +99,9 @@
             } else {
                 return _date;
             }
+        },
+        diff: function (date1, date2) {
+            return (this.toMilliSeconds(date1, true) - this.toMilliSeconds(date2, true)) / ONE_DAY_IN_MILLISECONDS;
         }
     };
 }(jQuery));
