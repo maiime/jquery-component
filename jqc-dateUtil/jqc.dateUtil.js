@@ -101,7 +101,7 @@
             }
         },
         diff: function (date1, date2) {
-            return (this.toMilliSeconds(date1, true) - this.toMilliSeconds(date2, true)) / ONE_DAY_IN_MILLISECONDS;
+            return (this.toMilliSeconds(date2, true) - this.toMilliSeconds(date1, true)) / ONE_DAY_IN_MILLISECONDS;
         }
     };
 }(jQuery));
