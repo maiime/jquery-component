@@ -200,7 +200,7 @@
      * after initialled, update the expiried item
      */
     function refreshLocalstorage(context) {
-        if (!context.localstorage.expiryTime || !context.localstorage.refreshUrl) {
+        if (!context.options.localstorage.expiryTime || !context.options.localstorage.refreshUrl) {
             return;
         }
         var data = context.data;
@@ -314,7 +314,9 @@
             if (newExpiryTimestamp > 0) {
                 data[DB_DATA_EXPIRY_TIMESTAMP] = newExpiryTimestamp;
             }
-            transaction.objectStore(name).add(data);
+            if (data) {
+                transaction.objectStore(name).add(data);
+            }
         }
     }
-}(jQuery));
+} (jQuery));
