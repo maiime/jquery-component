@@ -24,12 +24,19 @@
             }
         },
         toDate: function (date) {
+            var _date = null;
             if (typeof (date) == 'string') {
-                return new Date(date);
+                _date = new Date(date);
             } else if (typeof (date) == 'number') {
-                return new Date(date);
+                _date = new Date(date);
             } else {
-                return date;
+                _date = date;
+            }
+
+            if (_date instanceof (Date) && !isNaN(_date.valueOf())) {
+                return _date;
+            } else {
+                throw new Error("invalid date parameter.");
             }
         },
         plusHours: function (date, num, toMilliSeconds) {
@@ -104,4 +111,4 @@
             return (this.toMilliSeconds(date2, true) - this.toMilliSeconds(date1, true)) / ONE_DAY_IN_MILLISECONDS;
         }
     };
-}(jQuery));
+} (jQuery));
