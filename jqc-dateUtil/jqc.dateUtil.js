@@ -8,14 +8,7 @@
 
     $.jqcDateUtil = {
         toMilliSeconds: function (date, onlyKeepDate) {
-            var _date;
-            if (typeof (date) == 'string') {
-                _date = new Date(date).getTime();
-            } else if (typeof (date) == 'number') {
-                _date = date;
-            } else {
-                _date = date.getTime();
-            }
+            var _date = this.toDate(date).getTime();
 
             if (onlyKeepDate) {
                 return _date - (_date - 57600000) % ONE_DAY_IN_MILLISECONDS;
