@@ -26,7 +26,8 @@
     };
 
     const CACHE_BUILD_DEFAULT_OPTIONS = {
-        key: null, // 'string' or function
+        key: null, // 'string' or function,
+        notNeedFullRemoteData: true, // if need full remote data, the cache should be initialled with remote data
         patch: {
             enable: false,
             url: null, // patch new data into cache through url
@@ -106,7 +107,7 @@
         }
     };
 
-    function init(context, callback) {
+    function init(context, callback, notNeedFullRemoteData) {
         var data = context.options.init.data;
         if ($.isArray(data)) {
             context.data = data;
@@ -135,15 +136,15 @@
 
                             refreshLocalstorage(context);
                         } else {
-                            initCacheWithRemoteData(context, callback);
+                            initCacheWithRemoteData(context, callback, notNeedFullRemoteData);
                         }
                     };
                 } else {
-                    initCacheWithRemoteData(context, callback);
+                    initCacheWithRemoteData(context, callback, notNeedFullRemoteData);
                 }
             };
         } else {
-            initCacheWithRemoteData(context, callback);
+            initCacheWithRemoteData(context, callback, notNeedFullRemoteData);
         }
     }
 
@@ -231,7 +232,15 @@
         updateStore(context.options.name, context.localstorage.primaryKey, need2BeRefreshed);
     }
 
-    function initCacheWithRemoteData(context, callback) {
+    function initCacheWithRemoteData(context, callback, notNeedFullRemoteData) {
+        if (notNeedFullRemoteData) {
+            context.initialled = true;
+            context.data = [];
+            if (callback) {
+                callback(context.data);
+            }
+            return;
+        }
         if ($.trim(context.options.init.url).length > 0) {
             var ajaxOptions = {
                 url: context.options.init.url,
@@ -267,12 +276,12 @@
         }
     }
 
-    function updateStore(name, primaryKey, data, expiryTime) {
+    function updateStore(name, primaryKey, records, expiryTime) {
         var req = indexedDB.open(DB_NAME);
         req.onsuccess = function (event) {
             var db = event.target.result;
             if (db.objectStoreNames.contains(name)) {
-                pushDataToDB(db, name, data, expiryTime);
+                pushDataToDB(db, name, records, expiryTime);
             } else {
                 var version = db.version;
                 db.close();
@@ -283,39 +292,39 @@
                         keyPath: primaryKey
                     });
                     objectStore.transaction.oncomplete = function (event) {
-                        pushDataToDB(db, name, data, expiryTime);
+                        pushDataToDB(db, name, records, expiryTime);
                     };
                 };
             }
         };
     }
 
-    function pushDataToDB(db, name, data, expiryTime) {
+    function pushDataToDB(db, name, records, expiryTime) {
         var newExpiryTimestamp = 0;
         if (typeof (expiryTime) == 'string') {
             newExpiryTimestamp = $.jqcDateUtil.plus(new Date(), expiryTime, true);
         }
 
         var transaction = db.transaction(name, 'readwrite');
-        if ($.isArray(data)) {
+        if ($.isArray(records)) {
             var objectStore = transaction.objectStore(name);
             if (newExpiryTimestamp > 0) {
-                for (var i in data) {
-                    var _data = data[i];
-                    _data[DB_DATA_EXPIRY_TIMESTAMP] = newExpiryTimestamp;
-                    objectStore.add(_data);
+                for (var i in records) {
+                    var record = records[i];
+                    record[DB_DATA_EXPIRY_TIMESTAMP] = newExpiryTimestamp;
+                    objectStore.add(record);
                 }
             } else {
-                for (var i in data) {
-                    objectStore.add(data[i]);
+                for (var i in records) {
+                    objectStore.add(records[i]);
                 }
             }
         } else {
             if (newExpiryTimestamp > 0) {
-                data[DB_DATA_EXPIRY_TIMESTAMP] = newExpiryTimestamp;
+                records[DB_DATA_EXPIRY_TIMESTAMP] = newExpiryTimestamp;
             }
-            if (data) {
-                transaction.objectStore(name).add(data);
+            if (records) {
+                transaction.objectStore(name).add(records);
             }
         }
     }
