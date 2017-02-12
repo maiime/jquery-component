@@ -39,7 +39,7 @@
     const DB_DATA_EXPIRY_TIMESTAMP = '__expiryTimestamp__';
 
     $.jqcCache = function (options) {
-        this.options = $.extend(true, {}, (true, DEFAULT_OPTIONS, options);
+        this.options = $.extend(true, {}, DEFAULT_OPTIONS, options);
         this.data = [];
         this.initialled = false;
 
@@ -319,4 +319,4 @@
             }
         }
     }
-} (jQuery));
+}(jQuery));
