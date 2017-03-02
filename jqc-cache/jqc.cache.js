@@ -88,7 +88,7 @@
             init(this, function (data) {
                 keySetting(data, cache, _options.key);
                 callback();
-            });
+            }, _options.notNeedFullRemoteData);
         }
     };
 
@@ -153,42 +153,89 @@
         this.options = options;
     }
 
-    CacheMap.prototype.get = function (key) {
+    CacheMap.prototype.get = function (key, callback) {
         if ($.trim(key).length == 0) {
+            if (callback) {
+                callback(null);
+                return;
+            }
+
             return null;
         }
 
         var _this = this;
         if (_this.map.has(key)) {
+            if (callback) {
+                callback(_this.map.get(key));
+                return;
+            }
             return _this.map.get(key);
         } else {
-            if (_this.options.patch.enable) {
-                var data = null;
-                $.ajax({
-                    url: _this.options.patch.url,
-                    method: 'GET',
-                    data: _this.options.patch.param(key),
-                    async: false,
-                    success: function (resp) {
-                        if (_this.options.patch.parseFun) {
-                            data = _this.options.patch.parseFun(resp);
-                        } else {
-                            data = resp;
-                        }
-                        var context = _this.options.context;
-                        context.data.push(data);
-                        _this.map.set(key, data);
+            var context = _this.options.context;
+            if (callback) {
+                getFromDB(context.name, key, function (result) {
+                    if (result) {
+                        context.data.push(result);
+                        _this.map.set(key, result);
+                        callback(result);
+                    } else {
+                        if (_this.options.patch.enable) {
+                            var data = null;
+                            $.ajax({
+                                url: _this.options.patch.url,
+                                method: 'GET',
+                                data: _this.options.patch.param(key),
+                                async: false,
+                                success: function (resp) {
+                                    if (_this.options.patch.parseFun) {
+                                        data = _this.options.patch.parseFun(resp);
+                                    } else {
+                                        data = resp;
+                                    }
+                                    context.data.push(data);
+                                    _this.map.set(key, data);
 
-                        if (context.options.localstorage.enable) {
-                            setTimeout(function () {
-                                updateStore(context.options.name, context.options.localstorage.primaryKey, data);
-                            }, context.options.localstorage.delay);
+                                    if (context.options.localstorage.enable) {
+                                        setTimeout(function () {
+                                            updateStore(context.options.name, context.options.localstorage.primaryKey, data);
+                                        }, context.options.localstorage.delay);
+                                    }
+                                }
+                            });
+                            callback(data);
+                        } else {
+                            callback(null);
                         }
                     }
                 });
-                return data;
             } else {
-                return null;
+                if (_this.options.patch.enable) {
+                    var data = null;
+                    $.ajax({
+                        url: _this.options.patch.url,
+                        method: 'GET',
+                        data: _this.options.patch.param(key),
+                        async: false,
+                        success: function (resp) {
+                            if (_this.options.patch.parseFun) {
+                                data = _this.options.patch.parseFun(resp);
+                            } else {
+                                data = resp;
+                            }
+                            context.data.push(data);
+                            _this.map.set(key, data);
+
+                            if (context.options.localstorage.enable) {
+                                setTimeout(function () {
+                                    updateStore(context.options.name, context.options.localstorage.primaryKey, data);
+                                }, context.options.localstorage.delay);
+                            }
+                        }
+                    });
+                    return data;
+                } else {
+                    return null;
+                }
             }
         }
     };
@@ -297,6 +344,24 @@
                 };
             }
         };
+    }
+
+    function getFromDB(name, key, callback) {
+        var req = indexedDB.open(DB_NAME);
+        req.onsuccess = function (event) {
+            var db = event.target.result;
+            if (db.objectStoreNames.contains(name)) {
+                db.transaction(name).objectStore(name).get(key).onsuccess = function (readEvent) {
+                    callback(readEvent.target.result);
+                };
+            } else {
+                callback(null);
+            }
+        }
+
+        req.onerror = function (event) {
+            callback(null);
+        }
     }
 
     function pushDataToDB(db, name, records, expiryTime) {
