@@ -13,7 +13,8 @@
             data: null, // object array to initial cache
             url: null, // if not provide object array as above, fetch data through url
             param: null, // parameter for querying data
-            parseFun: null // parse function to fetch data from request result
+            parseFun: null, // parse function to fetch data from request result,
+            replaceWithNew: false // clear the previous localstorage cache, replace it with new one
         },
         localstorage: {
             delay: 1000, // data be pushed to local database in delay time
@@ -38,11 +39,14 @@
 
     const DB_NAME = 'jqcCacheDatabase';
     const DB_DATA_EXPIRY_TIMESTAMP = '__expiryTimestamp__';
+    const CACHE_NOT_INITIALLED = 0;
+    const CACHE_INITIALLED = 1;
+    const CACHE_VIRTUL_INITIALLED = 2;
 
     $.jqcCache = function (options) {
         this.options = $.extend(true, {}, DEFAULT_OPTIONS, options);
         this.data = [];
-        this.initialled = false;
+        this.cacheStatus = CACHE_NOT_INITIALLED;
 
         if ($.trim(this.options.name).length == 0) {
             throw new Error("cache name cann't be null");
@@ -80,20 +84,27 @@
             };
         }
         var cache = new CacheMap(_options);
-        if (this.isInitialled) {
+        if (this.isInitialled()) {
             keySetting(this.data, cache, _options.key);
 
             return cache;
         } else {
-            init(this, function (data) {
-                keySetting(data, cache, _options.key);
-                callback();
-            }, _options.notNeedFullRemoteData);
+            if (callback) {
+                init(this, function (data) {
+                    keySetting(data, cache, _options.key);
+                    if (callback) {
+                        callback();
+                    }
+                }, _options.notNeedFullRemoteData);
+            } else {
+                init(this, null, _options.notNeedFullRemoteData);
+                return cache;
+            }
         }
     };
 
     $.jqcCache.prototype.isInitialled = function () {
-        return this.initialled;
+        return this.cacheStatus === CACHE_INITIALLED;
     };
 
     $.jqcCache.prototype.queryAll = function (callback) {
@@ -111,14 +122,14 @@
         var data = context.options.init.data;
         if ($.isArray(data)) {
             context.data = data;
-            context.initialled = true;
+            context.cacheStatus = CACHE_INITIALLED;
             if (callback) {
                 callback(context.data);
             }
             return;
         }
 
-        if (context.options.localstorage.enable) {
+        if (context.options.localstorage.enable && !context.options.init.replaceWithNew) {
             var req = indexedDB.open(DB_NAME);
             req.onsuccess = function (event) {
                 var db = event.target.result;
@@ -128,7 +139,7 @@
                         var data = event.target.result;
                         if (data.length > 0) {
                             context.data = data;
-                            context.initialled = true;
+                            context.cacheStatus = CACHE_INITIALLED;
 
                             if (callback) {
                                 callback(context.data);
@@ -195,7 +206,7 @@
                                     context.data.push(data);
                                     _this.map.set(key, data);
 
-                                    if (context.options.localstorage.enable) {
+                                    if (context.options.localstorage.enable && context.cacheStatus === CACHE_INITIALLED) {
                                         setTimeout(function () {
                                             updateStore(context.options.name, context.options.localstorage.primaryKey, data);
                                         }, context.options.localstorage.delay);
@@ -281,7 +292,7 @@
 
     function initCacheWithRemoteData(context, callback, notNeedFullRemoteData) {
         if (notNeedFullRemoteData) {
-            context.initialled = true;
+            context.cacheStatus = CACHE_VIRTUL_INITIALLED;
             context.data = [];
             if (callback) {
                 callback(context.data);
@@ -300,7 +311,7 @@
                         context.data = resp;
                     }
 
-                    context.initialled = true;
+                    context.cacheStatus = CACHE_INITIALLED;
                     if (callback) {
                         callback(context.data);
                     }
@@ -377,11 +388,11 @@
                 for (var i in records) {
                     var record = records[i];
                     record[DB_DATA_EXPIRY_TIMESTAMP] = newExpiryTimestamp;
-                    objectStore.add(record);
+                    objectStore.put(record);
                 }
             } else {
                 for (var i in records) {
-                    objectStore.add(records[i]);
+                    objectStore.put(records[i]);
                 }
             }
         } else {
@@ -389,7 +400,7 @@
                 records[DB_DATA_EXPIRY_TIMESTAMP] = newExpiryTimestamp;
             }
             if (records) {
-                transaction.objectStore(name).add(records);
+                transaction.objectStore(name).put(records);
             }
         }
     }
