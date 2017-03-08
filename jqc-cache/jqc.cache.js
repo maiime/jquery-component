@@ -58,7 +58,7 @@
         }
 
         if (this.options.init.immediate) {
-            init(this);
+            init(this, null, null, this.options.init.replaceWithNew);
         }
     };
 
@@ -95,9 +95,9 @@
                     if (callback) {
                         callback();
                     }
-                }, _options.notNeedFullRemoteData);
+                }, _options.notNeedFullRemoteData, this.options.init.replaceWithNew);
             } else {
-                init(this, null, _options.notNeedFullRemoteData);
+                init(this, null, _options.notNeedFullRemoteData, this.options.init.replaceWithNew);
                 return cache;
             }
         }
@@ -108,17 +108,25 @@
     };
 
     $.jqcCache.prototype.queryAll = function (callback) {
+        if (null == callback || undefined == callback) {
+            throw new Error('has to provide call back function');
+        }
+
         if (this.isInitialled()) {
             if (callback) {
                 callback(this.data);
             }
             return this.data;
         } else {
-            init(this, callback);
+            init(this, callback, false, this.options.init.replaceWithNew);
         }
     };
 
-    function init(context, callback, notNeedFullRemoteData) {
+    $.jqcCache.prototype.refreshDB = function () {
+        init(this, null, false, true);
+    };
+
+    function init(context, callback, notNeedFullRemoteData, replaceWithNew) {
         var data = context.options.init.data;
         if ($.isArray(data)) {
             context.data = data;
@@ -129,7 +137,7 @@
             return;
         }
 
-        if (context.options.localstorage.enable && !context.options.init.replaceWithNew) {
+        if (context.options.localstorage.enable && !replaceWithNew) {
             var req = indexedDB.open(DB_NAME);
             req.onsuccess = function (event) {
                 var db = event.target.result;
@@ -236,7 +244,7 @@
                             context.data.push(data);
                             _this.map.set(key, data);
 
-                            if (context.options.localstorage.enable) {
+                            if (context.options.localstorage.enable && context.cacheStatus === CACHE_INITIALLED) {
                                 setTimeout(function () {
                                     updateStore(context.options.name, context.options.localstorage.primaryKey, data);
                                 }, context.options.localstorage.delay);
