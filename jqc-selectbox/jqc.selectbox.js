@@ -1,13 +1,292 @@
+/**
+ * select box, support filter & multi-select
+ * 
+ */
 (function ($) {
+    var selectboxCache = new Map(),
+        ELEMENT_ID = 'jqcSelectboxId';
+    var MAX_OPTION_COUNT = 16;
+
+    function fillMap(mapping, key, data) {
+        if (mapping.has(key)) {
+            var preData = mapping.get(key);
+            if ($.isArray(preData)) {
+                preData.push(data);
+            } else {
+                mapping.set(key, [preData, data]);
+            }
+        } else {
+            mapping.set(key, data);
+        }
+    }
+    /**
+     * For param
+     * {
+     *  source : data source
+     *  extOption : extension options
+     * }
+     * 
+     * For source
+     * [{
+     *  value : literal,
+     *  label : literal,
+     *  filter : literal,
+     *  pinyinFilter : literal
+     * }]
+     * or
+     * {
+     *  data : non-standard data source
+     *  adapter : adapter for convert data to standard data
+     * }
+     * 
+     * For adapter
+     * {
+     *  value : literal,
+     *  label : literal or function,
+     *  filter : literal,
+     *  pinyinFilter : literal
+     * }
+     * 
+     * @param {*} param 
+     */
+    function OptionCore(param) {
+        var defaultOptions = {
+            source: null,
+            extOption: null,
+            supportPinYin: false,
+            supportFuzzyMatch: false
+        };
+        this.option = $.extend(true, {}, defaultOptions, param);
+        this.source = null;
+        this.optionMapping = new Map();
+        this.sortedFilterCache = [];
+        this.filterIndex = new Map();
+        this.undefinedOption = '<li value="__undefined__">无对应选项</li>';
+    }
+
+    OptionCore.prototype.fuzzyFilter = function (inputTerm) {
+        var _inputTerm = $.trim(inputTerm);
+        if (0 == _inputTerm.length) {
+            return this.undefinedOption;
+        }
+
+        var matched = this.filterIndex.get(_inputTerm);
+        if (-1 == matched) {
+            return this.undefinedOption;
+        }
+
+        var optionList = '',
+            size = this.sortedFilterCache.length;
+        if (matched) {
+            return matched;
+        } else {
+            var counter = 1,
+                matched = false;
+            for (var i = 0; i < size; i++) {
+                var _data = this.sortedFilterCache[i];
+                if (_data.filter.indexOf(_inputTerm) >= 0) {
+                    if ($.isArray(_data.data)) {
+                        var __data = _data.data;
+                        for (var j in __data) {
+                            optionList = optionList.concat(__data[j].label);
+                        }
+                    } else {
+                        optionList = optionList.concat(_data.data.label);
+                    }
+                    if (MAX_OPTION_COUNT == counter) {
+                        break;
+                    }
+                    counter++;
+                    matched = true;
+                }
+            }
+        }
+
+        if (matched) {
+            this.filterIndex.set(_inputTerm, optionList);
+
+            return optionList;
+        } else {
+            this.filterIndex.set(_inputTerm, -1);
+
+            return this.undefinedOption;
+        }
+    };
+
+    OptionCore.prototype.filter = function (inputTerm) {
+        var _inputTerm = $.trim(inputTerm);
+        if (0 == _inputTerm.length) {
+            return this.undefinedOption;
+        }
+
+        var startPosition = this.filterIndex.get(_inputTerm);
+        if (-1 == startPosition) {
+            return this.undefinedOption;
+        }
+
+        var optionList = '',
+            start = startPosition,
+            realStart = -1,
+            size = this.sortedFilterCache.length;
+        if (null == startPosition || undefined == startPosition) {
+            var _length = _inputTerm.length;
+            do {
+                _length--;
+                startPosition = this.filterIndex.get(_inputTerm.substring(0, _length));
+                if (-1 == startPosition) {
+                    this.filterIndex.set(_inputTerm, -1);
+
+                    return this.undefinedOption;
+                } else if (0 <= startPosition) {
+                    start = startPosition
+                    break;
+                } else {
+                    start = 0;
+                }
+            } while (0 <= _length);
+        }
+
+        var counter = 1;
+        for (var i = start; i < size; i++) {
+            var _data = this.sortedFilterCache[i];
+            if (_data.filter.startsWith(_inputTerm)) {
+                if ($.isArray(_data.data)) {
+                    var __data = _data.data;
+                    for (var j in __data) {
+                        optionList = optionList.concat(__data[j].label);
+                    }
+                } else {
+                    optionList = optionList.concat(_data.data.label);
+                }
+                if (MAX_OPTION_COUNT == counter) {
+                    break;
+                }
+                counter++;
+                if (-1 == realStart) {
+                    realStart = i;
+                }
+            } else if (-1 < realStart) {
+                break;
+            }
+        }
+
+        if (-1 < realStart) {
+            this.filterIndex.set(_inputTerm, realStart);
+
+            return optionList;
+        } else {
+            this.filterIndex.set(_inputTerm, -1);
+
+            return this.undefinedOption;
+        }
+    };
+
+    OptionCore.prototype.setup = function () {
+        var _source = this.option.source;
+        if (!_source) {
+            throw new Error('The data source of selectbox should not be null or undefined.');
+        }
+        var keyVal = 'value',
+            keyFilter = 'filter',
+            keyPinyinFilter = 'pinyinFilter',
+            keyLabel = 'label',
+            mapping = new Map(),
+            unSorted = [],
+            sourceData = null;
+        if ($.isArray(_source)) {
+            if (!_source[0][_filter]) {
+                _filter = _label;
+            }
+
+            if (!_source[0][_pinyinFilter]) {
+                _pinyinFilter = _filter;
+            }
+            sourceData = _source;
+        } else {
+            if (_source.adapter) {
+                if (_source.adapter.value) {
+                    keyVal = _source.adapter.value;
+                }
+                if (_source.adapter.label) {
+                    keyLabel = _source.adapter.label;
+                }
+                if (_source.adapter.filter) {
+                    keyFilter = _source.adapter.filter;
+                } else {
+                    if ('string' != typeof (keyLabel)) {
+                        throw new Error('Must provide a field for filtering.');
+                    }
+                    keyFilter = keyLabel;
+                }
+                if (_source.adapter.pinyinFilter) {
+                    keyPinyinFilter = _source.adapter.pinyinFilter;
+                } else {
+                    keyPinyinFilter = keyFilter;
+                }
+            }
+            sourceData = _source.data;
+        }
+
+        for (var i in sourceData) {
+            var _data = sourceData[i];
+            if (!_data)
+                continue;
+            var packageData = null;
+            if ('string' == typeof (keyLabel)) {
+                packageData = {
+                    label: '<li '.concat('value="v').concat(_data[keyVal]).concat('">').concat(_data[keyLabel]).concat('</li>'),
+                    data: _data
+                };
+            } else {
+                packageData = {
+                    label: '<li '.concat('value="v').concat(_data[keyVal]).concat('">').concat(keyLabel(_data)).concat('</li>'),
+                    data: _data
+                };
+            }
+
+            var filterKey = _data[keyFilter].toString();
+            fillMap(mapping, filterKey, packageData);
+            unSorted.push(filterKey);
+            if (this.option.supportPinYin) {
+                var cnFilterKey = _data[keyPinyinFilter].toString();
+                if (cnFilterKey != filterKey) {
+                    fillMap(mapping, cnFilterKey, packageData);
+                    unSorted.push(cnFilterKey);
+                }
+                var pinyinFilterKey = $.pinyin(cnFilterKey);
+                if (filterKey != pinyinFilterKey && cnFilterKey != pinyinFilterKey) {
+                    fillMap(mapping, pinyinFilterKey, packageData);
+                    unSorted.push(pinyinFilterKey);
+                }
+            }
+            this.optionMapping.set(_data[keyVal].toString(), packageData);
+        }
+
+        var sorted = unSorted.sort(),
+            filterKeyBrush = null;
+        for (var i in sorted) {
+            var __filter = sorted[i];
+            if (__filter == filterKeyBrush) {
+                continue;
+            }
+            filterKeyBrush = __filter;
+            this.sortedFilterCache.push({
+                filter: __filter,
+                data: mapping.get(__filter)
+            });
+        }
+    };
+
     function SelectBox(param) {
         var defaultOptions = {
+            dataName: null, // for the same data type, in one application, should have the same name
             optionData: null, // data source
             width: 160, // option panel width
             valueSetting: null,
             supportPinYin: false, // for chinese
+            supportMultiSelect: false,
             element: null,
             fuzzyMatch: false,
-            supportMultiSelect: false,
             select: null // call back for selecting event
         };
 
