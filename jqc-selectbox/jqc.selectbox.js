@@ -61,6 +61,7 @@
         this.optionMapping = new Map();
         this.sortedFilterCache = [];
         this.filterIndex = new Map();
+        this.optionsCache = new Map();
         this.undefinedOption = '<li value="__undefined__">无对应选项</li>';
     }
 
@@ -70,7 +71,7 @@
             return this.undefinedOption;
         }
 
-        var matched = this.filterIndex.get(_inputTerm);
+        var matched = this.optionsCache.get(_inputTerm);
         if (-1 == matched) {
             return this.undefinedOption;
         }
@@ -103,11 +104,11 @@
         }
 
         if (matched) {
-            this.filterIndex.set(_inputTerm, optionList);
+            this.optionsCache.set(_inputTerm, optionList);
 
             return optionList;
         } else {
-            this.filterIndex.set(_inputTerm, -1);
+            this.optionsCache.set(_inputTerm, -1);
 
             return this.undefinedOption;
         }
@@ -116,6 +117,11 @@
     OptionCore.prototype.filter = function (inputTerm) {
         var _inputTerm = $.trim(inputTerm);
         if (0 == _inputTerm.length) {
+            return this.undefinedOption;
+        }
+
+        var matched = this.optionsCache.get(_inputTerm);
+        if (-1 == matched) {
             return this.undefinedOption;
         }
 
@@ -172,10 +178,12 @@
 
         if (-1 < realStart) {
             this.filterIndex.set(_inputTerm, realStart);
+            this.optionsCache.set(_inputTerm, optionList);
 
             return optionList;
         } else {
             this.filterIndex.set(_inputTerm, -1);
+            this.optionsCache.set(_inputTerm, -1);
 
             return this.undefinedOption;
         }
