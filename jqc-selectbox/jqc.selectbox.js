@@ -65,6 +65,19 @@
         this.undefinedOption = '<li value="__undefined__">无对应选项</li>';
     }
 
+    OptionCore.prototype.get = function (key) {
+        return this.optionMapping.get(key);
+    };
+
+    OptionCore.prototype.fetchLabel = function (key) {
+        var data = this.get(key);
+        if (data) {
+            return data.text;
+        } else {
+            return undefined;
+        }
+    };
+
     OptionCore.prototype.fuzzyFilter = function (inputTerm) {
         var _inputTerm = $.trim(inputTerm);
         if (0 == _inputTerm.length) {
@@ -243,11 +256,14 @@
             if ('string' == typeof (keyLabel)) {
                 packageData = {
                     label: '<li '.concat('value="v').concat(_data[keyVal]).concat('">').concat(_data[keyLabel]).concat('</li>'),
+                    text: _data[keyLabel],
                     data: _data
                 };
             } else {
+                var text = keyLabel(_data);
                 packageData = {
-                    label: '<li '.concat('value="v').concat(_data[keyVal]).concat('">').concat(keyLabel(_data)).concat('</li>'),
+                    label: '<li '.concat('value="v').concat(_data[keyVal]).concat('">').concat(text).concat('</li>'),
+                    text: text,
                     data: _data
                 };
             }
