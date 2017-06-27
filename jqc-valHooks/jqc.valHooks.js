@@ -1,33 +1,48 @@
-function JQCElementBase() {
-    this.typeName = null;
-    this.elementId = null;
-}
-
-JQCElementBase.prototype.JQC_ELEMENT_ID = "jqcElementId";
-JQCElementBase.prototype.JQC_ELEMENT_TYPE = "jqcElementType";
-
-JQCElementBase.prototype.getJqcTypeName = function () {
-    return this.typeName;
-}
-
-JQCElementBase.prototype.getJqcElementId = function () {
-    return this.elementId;
-}
-
+/**
+ * Dependent on
+ *  + jqc.baseElement.js
+ */
 (function ($) {
     function JQCValHooksCtrl() {
         this.typeCache = new Map();
     }
 
     JQCValHooksCtrl.prototype.addElement = function (jqcElementBase) {
-        var typeName = jqcElementBase.getJqcTypeName();
-        if (typeName) {
+        var typeName = jqcElementBase.getJqcTypeName(),
+            elementId = jqcElementBase.getJqcElementId();
+        if (typeName && elementId) {
             var cache = this.typeCache.get(typeName);
-            if (cache) {
-                cache.addElement(jqcElementBase.getJqcElementId, jqcElementBase);
+            if (!cache) {
+                cache = new Map();
+                this.typeCache.set(typeName, cache);
+            }
+            cache.set(elementId, jqcElementBase);
+        } else {
+            if (typeName) {
+                throw new Error("valHooks request a jqc element id.");
+            }
+            if (elementId) {
+                throw new Error("valHooks request a jqc type name.");
             }
         }
-    }
+    };
+
+    JQCValHooksCtrl.prototype.getElement = function (e) {
+        var typeName = e.attr(JQCElementBase.JQC_ELEMENT_TYPE),
+            elementId = e.attr(JQCElementBase.JQC_ELEMENT_ID);
+        if (typeName && elementId) {
+            var cache = this.typeCache.get(typeName);
+            if (cache) {
+                return cache.get(elementId);
+            }
+
+            return undefined;
+        } else {
+            throw new Error("Not a valid JQC Element.");
+        }
+    };
+
+    $.jqcValHooksCtrl = new jqcValHooksCtrl();
 
     var origHookGet = null,
         origHookSet = null;
@@ -41,11 +56,9 @@ JQCElementBase.prototype.getJqcElementId = function () {
     }
 
     $.valHooks.text.get = function (el) {
-        var _el = $(el),
-            _id = _el.attr(ELEMENT_ID);
-        if (_id) {
-            var obj = selectboxCache.get(_id);
-            return obj.options.currentVal;
+        var jqcElement = $.jqcValHooksCtrl.getElement($(el));
+        if (jqcElement) {
+            return jqcElement.getCurrentVal();
         } else {
             if ($.isFunction(origHookGet)) {
                 return origHookGet(el);
@@ -56,41 +69,9 @@ JQCElementBase.prototype.getJqcElementId = function () {
     };
 
     $.valHooks.text.set = function (el, val) {
-        var _el = $(el),
-            _id = _el.attr(ELEMENT_ID);
-        if (_id) {
-            var obj = selectboxCache.get(_id);
-            var data = obj.optionDataMapping.get(val),
-                label = '',
-                value = val;
-
-            if (null == data || undefined == data) {
-                if (obj.options.valueSetting && null != obj.options.valueSetting.defaultVal && undefined != obj.options.valueSetting.defaultVal) {
-                    data = obj.optionDataMapping.get(obj.options.valueSetting.defaultVal);
-                    label = data.label;
-                    value = data.value;
-                }
-            } else {
-                var _val = 'value',
-                    _label = 'label';
-                var optionData = obj.options.optionData;
-                if (!$.isArray(optionData) && optionData.adapter) {
-                    if (optionData.adapter.value) {
-                        _val = optionData.adapter.value;
-                    }
-                    if (optionData.adapter.label) {
-                        _label = optionData.adapter.label;
-                    }
-                }
-                if (null == _label || 'string' == typeof (_label)) {
-                    label = data.data[_label];
-                } else {
-                    label = _label(data.data);
-                }
-                value = data.data[_val];
-            }
-            obj.options.currentVal = value;
-            return el.value = label;
+        var jqcElement = $.jqcValHooksCtrl.getElement($(el));
+        if (jqcElement) {
+            return el.value = jqcElement.updateCurrentVal(val);
         } else {
             if ($.isFunction(origHookSet)) {
                 return origHookSet(el, val);
