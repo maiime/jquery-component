@@ -1,10 +1,12 @@
 /**
  * select box, support filter & multi-select
  * 
+ * Dependent on
+ *  + jqc.baseElement.js
+ *  + jqc.valHooks.js
  */
 (function ($) {
-    var selectboxCache = new Map(),
-        ELEMENT_ID = 'jqcSelectboxId';
+    var optionCoreCache = new Map();
     var MAX_OPTION_COUNT = 16;
 
     function fillMap(mapping, key, data) {
@@ -301,8 +303,53 @@
         }
     };
 
-    // try something
     function SelectBox(param) {
+        var defaultOptions = {
+            dataName: null, // for the same data type, in one application, should have the same name
+            optionData: null, // data source
+            extOption: null, // extension options
+            width: 160, // option panel width
+            valueSetting: null,
+            supportPinYin: false, // for chinese
+            supportMultiSelect: false,
+            element: null,
+            fuzzyMatch: false,
+            select: null // call back for selecting event
+        };
+        if (arguments.length > 0) {
+            $.jqcBaseElement.apply(this, arguments);
+        }
+        this.options = $.extend(true, {}, defaultOptions, param);
+        if (!this.options.dataName) {
+            throw new Error('Must provide a unique data name to identify the same type select box');
+        }
+        this.optionCore = optionCoreCache.get(this.options.dataName);
+        if (!this.optionCore) {
+            this.optionCore = new OptionCore({
+                source: this.options.optionData,
+                extOption: this.options.extOption,
+                supportPinYin: this.options.supportPinYin,
+                supportFuzzyMatch: this.options.supportFuzzyMatch
+            }); // data source
+            this.optionCore.setup();
+        }
+
+        this.el = this.options.element; // the jquery element for the target document node
+        this.typeName = 'jqcSelectBox';
+        this.elementId = 'jqc'.concat(Date.now().toString());
+        this.el.attr($.jqcBaseElement.JQC_ELEMENT_TYPE, this.typeName);
+        this.el.attr($.jqcBaseElement.JQC_ELEMENT_ID, this.elementId);
+
+        this.container = null; //container for option list & operation board
+        this.reset = null; // reset handler to reset value to default
+        this.defaultVal = null;
+    }
+
+    SelectBox.prototype = new $.jqcBaseElement();
+    SelectBox.prototype.constructor = SelectBox;
+
+    // try something
+    function SelectBoxOld(param) {
         var defaultOptions = {
             dataName: null, // for the same data type, in one application, should have the same name
             optionData: null, // data source

@@ -1,4 +1,6 @@
 /**
+ * jquery value hooks
+ * 
  * Dependent on
  *  + jqc.baseElement.js
  */

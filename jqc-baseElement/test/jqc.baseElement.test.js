@@ -4,6 +4,8 @@ QUnit.test("inherit", function (assert) {
             $.jqcBaseElement.apply(this, arguments);
         }
         this.extProps = null;
+        this.typeName = 'InheritTest';
+        this.elementId = 'helloworld';
     }
     InheritTest.prototype = new $.jqcBaseElement();
     InheritTest.prototype.constructor = InheritTest;
@@ -15,8 +17,6 @@ QUnit.test("inherit", function (assert) {
     };
 
     var instance = new InheritTest();
-    instance.typeName = 'InheritTest';
-    instance.elementId = 'helloworld';
     var _extProps = instance.updateCurrentVal(1);
 
     assert.equal(_extProps, 2, 'Return Label');
