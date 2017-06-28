@@ -28,8 +28,8 @@
     };
 
     JQCValHooksCtrl.prototype.getElement = function (e) {
-        var typeName = e.attr(JQCElementBase.JQC_ELEMENT_TYPE),
-            elementId = e.attr(JQCElementBase.JQC_ELEMENT_ID);
+        var typeName = e.attr($.jqcBaseElement.JQC_ELEMENT_TYPE),
+            elementId = e.attr($.jqcBaseElement.JQC_ELEMENT_ID);
         if (typeName && elementId) {
             var cache = this.typeCache.get(typeName);
             if (cache) {
@@ -42,7 +42,7 @@
         }
     };
 
-    $.jqcValHooksCtrl = new jqcValHooksCtrl();
+    $.jqcValHooksCtrl = new JQCValHooksCtrl();
 
     var origHookGet = null,
         origHookSet = null;
