@@ -250,6 +250,14 @@
             sourceData = _source.data;
         }
 
+        if (this.option.extOption) {
+            if ($.isArray(this.option.extOption)) {
+                sourceData = sourceData.concat(this.option.extOption);
+            } else {
+                sourceData = sourceData.push(this.option.extOption);
+            }
+        }
+
         for (var i in sourceData) {
             var _data = sourceData[i];
             if (!_data)
@@ -339,9 +347,15 @@
         this.elementId = 'jqc'.concat(Date.now().toString());
         this.el.attr($.jqcBaseElement.JQC_ELEMENT_TYPE, this.typeName);
         this.el.attr($.jqcBaseElement.JQC_ELEMENT_ID, this.elementId);
+        $.jqcValHooksCtrl.addElement(this);
 
         this.container = null; //container for option list & operation board
-        this.reset = null; // reset handler to reset value to default
+        this.operationBar = null;
+        this.resetter = null; // reset handler to reset value to default
+        this.refresher = null; // refresh handler to refresh the data source
+        this.input = null;
+        this.optionUL = null;
+        this.selectedUL = null;
         this.defaultVal = null;
     }
 
