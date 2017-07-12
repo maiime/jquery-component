@@ -1,0 +1,43 @@
+@charset "UTF-8";
+.jqcSelectboxHooks {
+    background-image: url("images/selectbox-filter.png");
+    background-repeat: no-repeat;
+    background-position: 2px;
+    text-indent: 18px;
+}
+
+.jqcSelectboxContainer {
+    position: absolute;
+    z-index: 200;
+    font-size: 12px;
+}
+
+.jqcSelectboxContainer button {
+    margin: 5px;
+}
+
+.jqcSelectboxContainer input {
+    padding: 5px;
+    border-width: 1px;
+}
+
+.jqcSelectboxContainer input:focus {
+    box-shadow: 0 0 3px rgba(237, 28, 36, 0.8);
+    border: 1px solid #ED1C24;
+    outline: none;
+}
+
+.jqcSelectboxContainer ul {
+    list-style: none;
+    padding: 3px 0 0 0;
+    margin: 0;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 3px rgba(73, 73, 73, 0.6);
+    border-radius: 3px;
+    max-height: 256px;
+}
+
+.jqcSelectboxContainer li {
+    padding: 5px;
+    cursor: pointer;
+}
