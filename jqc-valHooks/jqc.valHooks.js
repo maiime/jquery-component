@@ -40,7 +40,7 @@
 
             return undefined;
         } else {
-            throw new Error("Not a valid JQC Element.");
+            return undefined;
         }
     };
 

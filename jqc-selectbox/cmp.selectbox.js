@@ -449,7 +449,6 @@
 		});
 		var triggerByMe = false;
 		_this.options.element.focus(function(event) {
-			triggerByMe = true;
 			var maxWidth = $('body').width();
 			eOffset = _this.options.element.offset();
 			_this.optionContainer.css('top', eOffset.top + eOuterHeight + 2);

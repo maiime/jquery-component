@@ -13,7 +13,7 @@
     }
 
     var optionCoreCache = new Map();
-    var MAX_OPTION_COUNT = 16;
+    var MAX_OPTION_COUNT = 10;
     var UNDEFINED_OPTION = '__undefined__';
 
     function fillMap(mapping, key, data) {
@@ -212,6 +212,19 @@
         }
     };
 
+    OptionCore.prototype.updateDataSource = function (newDataSource) {
+        if (this.option.source.adapter) {
+            this.option.source.data = newDataSource;
+        } else {
+            this.option.source = newDataSource;
+        }
+        this.optionMapping = new Map();
+        this.sortedFilterCache = [];
+        this.filterIndex = new Map();
+        this.optionsCache = new Map();
+        this.setup();
+    };
+
     OptionCore.prototype.setup = function () {
         var _source = this.option.source;
         if (!_source) {
@@ -333,7 +346,8 @@
             supportMultiSelect: false,
             element: null,
             fuzzyMatch: false,
-            select: null // call back for selecting event
+            select: null, // call back for selecting event,
+            updateDataSource: null // update data source
         };
         if (arguments.length > 0) {
             $.jqcBaseElement.apply(this, arguments);
@@ -351,6 +365,7 @@
                 supportFuzzyMatch: this.options.supportFuzzyMatch
             }); // data source
             this.optionCore.setup();
+            optionCoreCache.set(this.options.dataName, this.optionCore);
         }
 
         this.el = this.options.element; // the jquery element for the target document node
@@ -377,7 +392,7 @@
     function renderSingleSelect(that) {
         that.container = $('<div class="jqcSelectboxContainer" style="display:none;">'); //container for option list & operation board
         that.operationBar = $('<div class="jqcSelectboxOperationBar">');
-        that.input = $('<input placeholder="输入过滤值">');
+        that.input = $('<input placeholder="输入选项值">');
         that.resetter = $('<button class="jqcSelectboxResetter">重置</button>'); // reset handler to reset value to default
         that.refresher = $('<button class="jqcSelectboxRefresher">刷新</button>'); // refresh handler to refresh the data source
         that.optionUL = $('<ul class="jqcSelectboxOptions">');
@@ -391,13 +406,15 @@
         that.input.css('width', that.options.width - 12);
         that.container.appendTo('body');
 
+        var triggerByMe = false;
         that.el.focus(function (e) {
+            triggerByMe = true;
             var maxWidth = $('body').width();
             that.container.css('top', elOffset.top + elOuterHeight + 2);
-            if (that.optionUL.outerWidth() + elOffset.left + 5 > maxWidth) {
-                that.optionUL.css('right', maxWidth - (elOffset.left + elOuterWidth));
+            if (that.container.outerWidth() + elOffset.left + 5 > maxWidth) {
+                that.container.css('right', maxWidth - (elOffset.left + elOuterWidth - 15));
             } else {
-                that.optionUL.css('left', elOffset.left);
+                that.container.css('left', elOffset.left);
             }
             that.container.show();
             that.input.focus();
@@ -412,16 +429,17 @@
         that.input.keyup(function (e) {
             switch (e.keyCode) {
                 case $.ui.keyCode.ENTER:
-                    // _this.optionPanel.find('li.oscSelected').trigger('click');
+                    that.optionUL.find('li.jqcSelectboxSelected').trigger('click');
+                    selectIndex = null;
                     return;
                 case $.ui.keyCode.ESCAPE:
-                    // _this.optionContainer.hide();
+                    that.container.hide();
                     return;
                 case $.ui.keyCode.UP:
-                    // selectIndex == null ? selectIndex = -1 : selectIndex--;
+                    selectIndex == null ? selectIndex = -1 : selectIndex--;
                     break;
                 case $.ui.keyCode.DOWN:
-                    // selectIndex == null ? selectIndex = 0 : selectIndex++;
+                    selectIndex == null ? selectIndex = 0 : selectIndex++;
                     break;
                 default:
                     {
@@ -430,7 +448,7 @@
                         }
                         filterHandler = setTimeout(function () {
                             if (oldVal != that.input.val()) {
-                                that.optionUL.html(filterFun(that.input.val()));
+                                that.optionUL.html(filterFun.call(that.optionCore, that.input.val()));
                                 optionSize = that.optionUL.find('li').length;
                                 selectIndex = null;
                             }
@@ -440,6 +458,22 @@
                         return;
                     }
             }
+            if (optionSize === 0) {
+                return;
+            }
+            that.optionUL.find('li.jqcSelectboxSelected').removeClass('jqcSelectboxSelected');
+            that.optionUL.find('li').eq(selectIndex = selectIndex % optionSize).addClass('jqcSelectboxSelected');
+        });
+
+        $(document).click(function (e) {
+            if (!triggerByMe) {
+                that.container.hide();
+            }
+            triggerByMe = false;
+        });
+
+        that.container.click(function (e) {
+            triggerByMe = true;
         });
 
         that.optionUL.click(function (e) {
@@ -447,10 +481,37 @@
             if (UNDEFINED_OPTION == _val) {
                 return;
             }
+            _val = _val.substr(1);
             if (that.options.select) {
                 that.options.select(that.optionCore.get(_val).data);
             }
+            that.input.val('');
+            that.optionUL.empty();
             that.el.val(_val);
+            oldVal = null;
+            that.container.hide();
+        });
+
+        that.resetter.click(function (e) {
+            oldVal = null;
+            that.input.val('');
+            that.optionUL.empty();
+            that.el.val(that.defaultVal);
+            that.container.hide();
+        });
+
+        that.refresher.click(function (e) {
+            if (!that.options.updateDataSource) {
+                return;
+            }
+            var newDataSource = that.options.updateDataSource();
+            if ($.isArray(newDataSource)) {
+                that.optionCore.updateDataSource(newDataSource);
+            }
+            oldVal = null;
+            that.input.val('');
+            that.optionUL.empty();
+            that.el.val(that.defaultVal);
         });
     }
 
