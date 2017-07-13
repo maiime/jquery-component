@@ -115,7 +115,58 @@ new $.jqcSelectBox({
     width: 160, // option panel width,
     element: $('#selectboxTestMulti'),
     dataName: 'test',
-    supportMultiSelect: true
+    supportMultiSelect: true,
+    updateDataSource: function () {
+        return [{
+            value: 'fgc',
+            label: 'fgc'
+        }, {
+            value: 'def',
+            label: 'edf'
+        }, {
+            value: 'fgd',
+            label: 'fgd'
+        }, {
+            value: 'fge',
+            label: 'fge'
+        }, {
+            value: 'fgf',
+            label: 'fgf'
+        }, {
+            value: 'fgfa',
+            label: 'fgfa'
+        }, {
+            value: 'fgfb',
+            label: 'fgfb'
+        }, {
+            value: 'fgfc',
+            label: 'fgfc'
+        }, {
+            value: 'fgfd',
+            label: 'fgfd'
+        }, {
+            value: 'fgfe',
+            label: 'fgfe'
+        }, {
+            value: 'fgff',
+            label: 'fgff'
+        }, {
+            value: 'fgfg',
+            label: 'fgfg'
+        }, {
+            value: 'fgfh',
+            label: 'fgfh'
+        }, {
+            value: 'fgfi',
+            label: 'fgfi'
+        }, {
+            value: 'fgfj',
+            label: 'fgfj'
+        }, {
+            value: 'fgfk',
+            label: 'fgfk'
+        }]
+    }
 });
 
 new $.jqcSelectBox({

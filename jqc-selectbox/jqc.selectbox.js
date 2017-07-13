@@ -139,6 +139,11 @@
 
     OptionCore.prototype.filter = function (inputTerm) {
         var _inputTerm = $.trim(inputTerm);
+        if (inputTerm.isMulti) {
+            _inputTerm = $.trim(inputTerm.value);
+        } else {
+            _inputTerm = $.trim(inputTerm);
+        }
         if (0 == _inputTerm.length) {
             return this.undefinedOption;
         }
@@ -409,7 +414,7 @@
         that.container.css('width', that.options.width * 2 + 116);
         that.input.css('width', that.options.width);
         that.optionUL.css('width', that.options.width + 50);
-        that.optionSelected.css('width', that.options.width + 50);
+        that.optionSelected.css('width', that.options.width + 60);
         that.container.appendTo('body');
 
         that.valueCache = new Map();
@@ -468,7 +473,11 @@
                         }
                         filterHandler = setTimeout(function () {
                             if (oldVal != that.input.val()) {
-                                that.optionUL.html(filterFun.call(that.optionCore, that.input.val()));
+                                that.optionUL.html(filterFun.call(that.optionCore, {
+                                    value: that.input.val(),
+                                    selected: that.valueCache,
+                                    isMulti: true
+                                }));
                                 optionSize = that.optionUL.find('li').length;
                                 selectIndex = null;
                             }
@@ -506,6 +515,9 @@
         that.optionUL.click(function (e) {
             var eTarget = $(e.target);
             var _val = eTarget.attr('value');
+            if (null == _val || undefined == _val) {
+                return;
+            }
             if (UNDEFINED_OPTION == _val) {
                 return;
             }
@@ -524,6 +536,9 @@
         that.optionSelected.click(function (e) {
             var eTarget = $(e.target);
             var _val = eTarget.attr('value');
+            if (null == _val || undefined == _val) {
+                return;
+            }
             _val = _val.substr(1);
             that.valueCache.delete(_val);
             var result = '';
@@ -654,6 +669,9 @@
 
         that.optionUL.click(function (e) {
             var _val = $(e.target).attr('value');
+            if (null == _val || undefined == _val) {
+                return;
+            }
             if (UNDEFINED_OPTION == _val) {
                 return;
             }

@@ -58,6 +58,9 @@
 
 .jqcSelectboxSelectedOption {
     float: right;
+    list-style-position: inside !important;
+    list-style-image: url('images/selectbox-check.png') !important;
+    border: none;
 }
 
 .jqcSelectboxContainer li {
@@ -72,6 +75,7 @@
 }
 
 .jqcSelectboxSelectedOption li:hover {
+    list-style-image: url('images/selectbox-delete.png') !important;
     background-color: #F5F5F5;
     color: #686868;
 }
