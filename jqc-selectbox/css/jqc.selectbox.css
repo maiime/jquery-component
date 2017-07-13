@@ -12,8 +12,23 @@
     font-size: 12px;
 }
 
+.jqcSelectboxOperationBar {
+    margin: 0 0 3px 0;
+}
+
 .jqcSelectboxContainer button {
-    margin: 5px;
+    padding: 3px 9px;
+    margin: 0 0 0 3px;
+    letter-spacing: 1px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background-color: #F5F5F5;
+    cursor: pointer;
+    color: #686868;
+}
+
+.jqcSelectboxContainer button:hover {
+    color: #000000;
 }
 
 .jqcSelectboxContainer input {
@@ -37,6 +52,14 @@
     max-height: 268px;
 }
 
+.jqcSelectboxOptions {
+    float: left;
+}
+
+.jqcSelectboxSelectedOption {
+    float: right;
+}
+
 .jqcSelectboxContainer li {
     padding: 5px;
     cursor: pointer;
@@ -46,4 +69,9 @@
 .jqcSelectboxSelected {
     background-color: #ED1C24;
     color: #FFFFFF;
+}
+
+.jqcSelectboxSelectedOption li:hover {
+    background-color: #F5F5F5;
+    color: #686868;
 }

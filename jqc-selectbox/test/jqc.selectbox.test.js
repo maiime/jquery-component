@@ -48,7 +48,7 @@ new $.jqcSelectBox({
         value: 'abfk',
         label: 'abfk'
     }], // data source
-    width: 160, // option panel width
+    width: 120, // option panel width
     element: $('#selectboxTest'),
     dataName: 'test',
     updateDataSource: function () {
@@ -109,4 +109,18 @@ new $.jqcSelectBox({
     defaultVal: 'abfj',
     element: $('#selectboxTestRight'),
     dataName: 'test'
+});
+
+new $.jqcSelectBox({
+    width: 160, // option panel width,
+    element: $('#selectboxTestMulti'),
+    dataName: 'test',
+    supportMultiSelect: true
+});
+
+new $.jqcSelectBox({
+    width: 160, // option panel width,
+    element: $('#selectboxTestMultiRight'),
+    dataName: 'test',
+    supportMultiSelect: true
 });
