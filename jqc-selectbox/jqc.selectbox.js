@@ -138,7 +138,7 @@
     };
 
     OptionCore.prototype.filter = function (inputTerm) {
-        var _inputTerm = $.trim(inputTerm);
+        var _inputTerm = null;
         if (inputTerm.isMulti) {
             _inputTerm = $.trim(inputTerm.value);
         } else {
@@ -151,6 +151,9 @@
         var matched = this.optionsCache.get(_inputTerm);
         if (-1 == matched) {
             return this.undefinedOption;
+        }
+        if (!inputTerm.isMulti && matched) {
+            return matched;
         }
 
         var startPosition = this.filterIndex.get(_inputTerm);
@@ -187,10 +190,24 @@
                 if ($.isArray(_data.data)) {
                     var __data = _data.data;
                     for (var j in __data) {
-                        optionList = optionList.concat(__data[j].label);
+                        var __dataTmp = __data[j];
+                        if (inputTerm.isMulti && inputTerm.selected.has(__dataTmp.data[__dataTmp.key])) {
+                            if (-1 == realStart) {
+                                realStart = i;
+                            }
+                            continue;
+                        }
+                        optionList = optionList.concat(__dataTmp.label);
                     }
                 } else {
-                    optionList = optionList.concat(_data.data.label);
+                    var __data = _data.data;
+                    if (inputTerm.isMulti && inputTerm.selected.has(__data.data[__data.key])) {
+                        if (-1 == realStart) {
+                            realStart = i;
+                        }
+                        continue;
+                    }
+                    optionList = optionList.concat(__data.label);
                 }
                 if (MAX_OPTION_COUNT == counter) {
                     break;
@@ -206,8 +223,11 @@
 
         if (-1 < realStart) {
             this.filterIndex.set(_inputTerm, realStart);
-            this.optionsCache.set(_inputTerm, optionList);
-
+            if (inputTerm.isMulti) {
+                this.optionsCache.set(_inputTerm, 1);
+            } else {
+                this.optionsCache.set(_inputTerm, optionList);
+            }
             return optionList;
         } else {
             this.filterIndex.set(_inputTerm, -1);
@@ -292,6 +312,7 @@
             if ('string' == typeof (keyLabel)) {
                 packageData = {
                     label: '<li '.concat('value="v').concat(_data[keyVal]).concat('">').concat(_data[keyLabel]).concat('</li>'),
+                    key: keyVal,
                     text: _data[keyLabel],
                     data: _data
                 };
@@ -299,6 +320,7 @@
                 var text = keyLabel(_data);
                 packageData = {
                     label: '<li '.concat('value="v').concat(_data[keyVal]).concat('">').concat(text).concat('</li>'),
+                    key: keyVal,
                     text: text,
                     data: _data
                 };
