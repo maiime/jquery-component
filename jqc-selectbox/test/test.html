@@ -9,10 +9,16 @@
 </head>
 
 <body>
-    <input id="selectboxTest">
-    <input id="selectboxTestRight" style="float:right;">
-    <input id="selectboxTestMulti"><br>
-    <input id="selectboxTestMultiRight" style="float:right;">
+    <label for="selectboxBasic">Basic : </label><input id="selectboxBasic">
+    <label for="selectboxBasicFilter">Basic with filter : </label><input id="selectboxBasicFilter">
+    <label for="selectboxDefaultAndWidth">Default And Width : </label><input id="selectboxDefaultAndWidth"><br>
+    <label for="selectboxPinyin">Pinyin : </label><input id="selectboxPinyin">
+    <label for="selectboxPinyinFilter">Pinyin And Filter : </label><input id="selectboxPinyinFilter"><br>
+    <label for="selectboxExtOption">ExtOption : </label><input id="selectboxExtOption">
+    <label for="selectboxMulti">Multiple Select : </label><input id="selectboxMulti">
+    <label for="selectboxAdapter">Adapter : </label><input id="selectboxAdapter"><br>
+    <label for="selectboxFuzzy">Fuzzy Filter : </label><input id="selectboxFuzzy"><br>
+
 
     <script src="../../qunit/jquery-3.1.1.js"></script>
     <script src="../../qunit/version.js"></script>
@@ -20,6 +26,7 @@
     <script src="../../qunit/qunit-2.1.1.js"></script>
     <script src="../../jqc-valHooks/jqc.valHooks.js"></script>
     <script src="../../jqc-baseElement/jqc.baseElement.js"></script>
+    <script src="../../jqc-pinyin/jqc.pinyin.js"></script>
     <script src="../jqc.selectbox.js"></script>
     <script src="jqc.selectbox.test.js"></script>
 </body>

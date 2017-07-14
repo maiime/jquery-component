@@ -73,6 +73,9 @@
         this.filterIndex = new Map();
         this.optionsCache = new Map();
         this.undefinedOption = '<li value="'.concat(UNDEFINED_OPTION).concat('">无对应选项</li>');
+        if (this.option.supportPinYin && !(this.option.pinyinParser && this.option.pinyinParser.firstAlphabet)) {
+            throw new Error('Need a pinyin parser that supports firstAlphabet.');
+        }
     }
 
     OptionCore.prototype.get = function (key) {
@@ -183,7 +186,7 @@
             } while (0 <= _length);
         }
 
-        var counter = 1;
+        var counter = 0;
         for (var i = start; i < size; i++) {
             var _data = this.sortedFilterCache[i];
             if (_data.filter.startsWith(_inputTerm)) {
@@ -198,6 +201,7 @@
                             continue;
                         }
                         optionList = optionList.concat(__dataTmp.label);
+                        counter++;
                     }
                 } else {
                     var __data = _data.data;
@@ -208,11 +212,11 @@
                         continue;
                     }
                     optionList = optionList.concat(__data.label);
+                    counter++;
                 }
                 if (MAX_OPTION_COUNT == counter) {
                     break;
                 }
-                counter++;
                 if (-1 == realStart) {
                     realStart = i;
                 }
@@ -335,9 +339,6 @@
                     fillMap(mapping, cnFilterKey, packageData);
                     unSorted.push(cnFilterKey);
                 }
-                if (!(this.option.pinyinParser && this.option.pinyinParser.firstAlphabet)) {
-                    throw new Error('Need a pinyin parser that supports firstAlphabet.');
-                }
                 var pinyinFilterKey = this.option.pinyinParser.firstAlphabet(cnFilterKey);
                 if (filterKey != pinyinFilterKey && cnFilterKey != pinyinFilterKey) {
                     fillMap(mapping, pinyinFilterKey, packageData);
@@ -370,6 +371,7 @@
             width: 120, // option panel width
             defaultVal: null,
             supportPinYin: false, // for chinese
+            pinyinParser: null,
             supportMultiSelect: false,
             element: null,
             fuzzyMatch: false,
@@ -390,6 +392,7 @@
                 source: this.options.optionData,
                 extOption: this.options.extOption,
                 supportPinYin: this.options.supportPinYin,
+                pinyinParser: this.options.pinyinParser,
                 supportFuzzyMatch: this.options.supportFuzzyMatch
             }); // data source
             this.optionCore.setup();
@@ -404,8 +407,8 @@
         this.el.attr($.jqcBaseElement.JQC_ELEMENT_ID, this.elementId);
         $.jqcValHooksCtrl.addElement(this);
 
-        if (this.options.defaultVal) {
-            this.defaultVal = this.options.defaultVal;
+        if (this.options.defaultVal || this.options.defaultVal === 0 || this.options.defaultVal === false) {
+            this.defaultVal = this.options.defaultVal.toString();
         } else {
             this.defaultVal = UNDEFINED_OPTION;
         }
@@ -428,7 +431,10 @@
         that.optionUL = $('<ul class="jqcSelectboxOptions">');
         that.optionSelected = $('<ul class="jqcSelectboxSelectedOption"></ul>');
 
-        that.operationBar.append(that.input).append(that.resetter).append(that.refresher);
+        that.operationBar.append(that.input).append(that.resetter);
+        if (that.options.updateDataSource) {
+            that.operationBar.append(that.refresher);
+        }
         that.container.append(that.operationBar).append(that.optionUL).append(that.optionGap).append(that.optionSelected);
         var elOffset = that.el.offset(),
             elOuterHeight = that.el.outerHeight(),
@@ -460,7 +466,7 @@
         });
 
         var filterHandler = null,
-            filterFun = that.options.fuzzyMatch ? that.optionCore.fuzzyFilter : that.optionCore.filter;
+            filterFun = that.options.supportFuzzyMatch ? that.optionCore.fuzzyFilter : that.optionCore.filter;
         var oldVal = null,
             selectIndex = null,
             optionSize = 0;
@@ -591,16 +597,18 @@
             reset(true);
         });
 
-        that.refresher.click(function (e) {
-            if (!that.options.updateDataSource) {
-                return;
-            }
-            var newDataSource = that.options.updateDataSource();
-            if ($.isArray(newDataSource)) {
-                that.optionCore.updateDataSource(newDataSource);
-            }
-            reset(false);
-        });
+        if (that.options.updateDataSource) {
+            that.refresher.click(function (e) {
+                if (!that.options.updateDataSource) {
+                    return;
+                }
+                var newDataSource = that.options.updateDataSource();
+                if ($.isArray(newDataSource)) {
+                    that.optionCore.updateDataSource(newDataSource);
+                }
+                reset(false);
+            });
+        }
     }
 
     function renderSingleSelect(that) {
@@ -611,13 +619,22 @@
         that.refresher = $('<button class="jqcSelectboxRefresher" title="从服务器获取新选项">刷新</button>'); // refresh handler to refresh the data source
         that.optionUL = $('<ul>');
 
-        that.operationBar.append(that.input).append(that.resetter).append(that.refresher);
+        that.operationBar.append(that.input).append(that.resetter);
+        if (that.options.updateDataSource) {
+            that.operationBar.append(that.refresher);
+        }
         that.container.append(that.operationBar).append(that.optionUL);
         var elOffset = that.el.offset(),
             elOuterHeight = that.el.outerHeight(),
             elOuterWidth = that.el.outerWidth();
         that.container.css('width', that.options.width + 116);
-        that.input.css('width', that.options.width);
+        var inputWidth = 0;
+        if (that.options.updateDataSource) {
+            inputWidth = that.options.width;
+        } else {
+            inputWidth = that.options.width + 52;
+        }
+        that.input.css('width', inputWidth);
         that.container.appendTo('body');
 
         var triggerByMe = false;
@@ -635,7 +652,7 @@
         });
 
         var filterHandler = null,
-            filterFun = that.options.fuzzyMatch ? that.optionCore.fuzzyFilter : that.optionCore.filter;
+            filterFun = that.options.supportFuzzyMatch ? that.optionCore.fuzzyFilter : that.optionCore.filter;
         var oldVal = null,
             selectIndex = null,
             optionSize = 0;
@@ -721,25 +738,23 @@
             reset(true);
         });
 
-        that.refresher.click(function (e) {
-            if (!that.options.updateDataSource) {
-                return;
-            }
-            var newDataSource = that.options.updateDataSource();
-            if ($.isArray(newDataSource)) {
-                that.optionCore.updateDataSource(newDataSource);
-            }
-            reset(false);
-        });
+        if (that.options.updateDataSource) {
+            that.refresher.click(function (e) {
+                if (!that.options.updateDataSource) {
+                    return;
+                }
+                var newDataSource = that.options.updateDataSource();
+                if ($.isArray(newDataSource)) {
+                    that.optionCore.updateDataSource(newDataSource);
+                }
+                reset(false);
+            });
+        }
     }
 
     $.jqcSelectBox.prototype = new $.jqcBaseElement();
     $.jqcSelectBox.prototype.constructor = $.jqcSelectBox;
     $.jqcSelectBox.prototype.updateCurrentVal = function (val) {
-        if (val === this.currentVal) {
-            return;
-        }
-
         if (val === UNDEFINED_OPTION) {
             this.currentVal = undefined;
             return '';

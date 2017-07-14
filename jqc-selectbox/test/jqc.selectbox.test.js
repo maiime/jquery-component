@@ -1,177 +1,500 @@
-new $.jqcSelectBox({
-    optionData: [{
-        value: 'abc',
-        label: 'abc'
-    }, {
-        value: 'def',
-        label: 'edf'
-    }, {
-        value: 'abd',
-        label: 'abd'
-    }, {
-        value: 'abe',
-        label: 'abe'
-    }, {
-        value: 'abf',
-        label: 'abf'
-    }, {
-        value: 'abfa',
-        label: 'abfa'
-    }, {
-        value: 'abfb',
-        label: 'abfb'
-    }, {
-        value: 'abfc',
-        label: 'abfc'
-    }, {
-        value: 'abfd',
-        label: 'abfd'
-    }, {
-        value: 'abfe',
-        label: 'abfe'
-    }, {
-        value: 'abff',
-        label: 'abff'
-    }, {
-        value: 'abfg',
-        label: 'abfg'
-    }, {
-        value: 'abfh',
-        label: 'abfh'
-    }, {
-        value: 'abfi',
-        label: 'abfi'
-    }, {
-        value: 'abfj',
-        label: 'abfj'
-    }, {
-        value: 'abfk',
-        label: 'abfk'
-    }], // data source
-    width: 120, // option panel width
-    element: $('#selectboxTest'),
-    dataName: 'test',
-    updateDataSource: function () {
-        return [{
-            value: 'fgc',
-            label: 'fgc'
-        }, {
-            value: 'def',
-            label: 'edf'
-        }, {
-            value: 'fgd',
-            label: 'fgd'
-        }, {
-            value: 'fge',
-            label: 'fge'
-        }, {
-            value: 'fgf',
-            label: 'fgf'
-        }, {
-            value: 'fgfa',
-            label: 'fgfa'
-        }, {
-            value: 'fgfb',
-            label: 'fgfb'
-        }, {
-            value: 'fgfc',
-            label: 'fgfc'
-        }, {
-            value: 'fgfd',
-            label: 'fgfd'
-        }, {
-            value: 'fgfe',
-            label: 'fgfe'
-        }, {
-            value: 'fgff',
-            label: 'fgff'
-        }, {
-            value: 'fgfg',
-            label: 'fgfg'
-        }, {
-            value: 'fgfh',
-            label: 'fgfh'
-        }, {
-            value: 'fgfi',
-            label: 'fgfi'
-        }, {
-            value: 'fgfj',
-            label: 'fgfj'
-        }, {
-            value: 'fgfk',
-            label: 'fgfk'
-        }]
+var basicDataSrc = [{
+    value: 'vala01',
+    label: 'a01'
+}, {
+    value: 'vala02',
+    label: 'a02'
+}, {
+    value: 'valaa01',
+    label: 'aa01'
+}, {
+    value: 'valaa02',
+    label: 'aa02'
+}, {
+    value: 'valab01',
+    label: 'ab01'
+}, {
+    value: 'valab02',
+    label: 'ab02'
+}, {
+    value: 'valac01',
+    label: 'ac01'
+}, {
+    value: 'valac02',
+    label: 'ac02'
+}, {
+    value: 'valb01',
+    label: 'b01'
+}, {
+    value: 'valb02',
+    label: 'b02'
+}, {
+    value: 'valba01',
+    label: 'ba01'
+}, {
+    value: 'valba02',
+    label: 'ba02'
+}, {
+    value: 'valbb01',
+    label: 'bb01'
+}, {
+    value: 'valbb02',
+    label: 'bb02'
+}, {
+    value: 'valbc01',
+    label: 'bc01'
+}, {
+    value: 'valbc02',
+    label: 'bc02'
+}, {
+    value: 'val啊01',
+    label: '啊01'
+}, {
+    value: 'val啊02',
+    label: '啊02'
+}, {
+    value: 'val啊啊01',
+    label: '啊啊01'
+}, {
+    value: 'val啊啊02',
+    label: '啊啊02'
+}, {
+    value: 'val啊不01',
+    label: '啊不01'
+}, {
+    value: 'val啊不02',
+    label: '啊不02'
+}, {
+    value: 'val啊才01',
+    label: '啊才01'
+}, {
+    value: 'val啊才02',
+    label: '啊才02'
+}];
+
+var basicFilterDataSrc = [{
+    value: 'vala01',
+    label: 'a01',
+    filter: 'b01'
+}, {
+    value: 'vala02',
+    label: 'a02',
+    filter: 'b02'
+}, {
+    value: 'valaa01',
+    label: 'aa01',
+    filter: 'bb01'
+}, {
+    value: 'valaa02',
+    label: 'aa02',
+    filter: 'bb02'
+}, {
+    value: 'valab01',
+    label: 'ab01',
+    filter: 'bc01'
+}, {
+    value: 'valab02',
+    label: 'ab02',
+    filter: 'bc02'
+}, {
+    value: 'valac01',
+    label: 'ac01',
+    filter: 'bd01'
+}, {
+    value: 'valac02',
+    label: 'ac02',
+    filter: 'bd02'
+}, {
+    value: 'valb01',
+    label: 'b01',
+    filter: 'c01'
+}, {
+    value: 'valb02',
+    label: 'b02',
+    filter: 'c02'
+}, {
+    value: 'valba01',
+    label: 'ba01',
+    filter: 'cb01'
+}, {
+    value: 'valba02',
+    label: 'ba02',
+    filter: 'cb02'
+}, {
+    value: 'valbb01',
+    label: 'bb01',
+    filter: 'cc01'
+}, {
+    value: 'valbb02',
+    label: 'bb02',
+    filter: 'cc02'
+}, {
+    value: 'valbc01',
+    label: 'bc01',
+    filter: 'cd01'
+}, {
+    value: 'valbc02',
+    label: 'bc02',
+    filter: 'cd01'
+}, {
+    value: 'val啊01',
+    label: '啊01',
+    filter: 'a01'
+}, {
+    value: 'val啊02',
+    label: '啊02',
+    filter: 'a02'
+}, {
+    value: 'val啊啊01',
+    label: '啊啊01',
+    filter: 'aa01'
+}, {
+    value: 'val啊啊02',
+    label: '啊啊02',
+    filter: 'aa02'
+}, {
+    value: 'val啊不01',
+    label: '啊不01',
+    filter: 'ab01'
+}, {
+    value: 'val啊不02',
+    label: '啊不02',
+    filter: 'ab02'
+}, {
+    value: 'val啊才01',
+    label: '啊才01',
+    filter: 'ac01'
+}, {
+    value: 'val啊才02',
+    label: '啊才02',
+    filter: 'ac02'
+}];
+var pinyinFilterDataSrc = [{
+        value: 'vala01',
+        label: 'a01',
+        filter: 'b01',
+        pinyinFilter: '阿01'
+    },
+    {
+        value: 'vala02',
+        label: 'a02',
+        filter: 'b02',
+        pinyinFilter: '阿02'
+    },
+    {
+        value: 'valaa01',
+        label: 'aa01',
+        filter: 'bb01',
+        pinyinFilter: '阿阿01'
+    },
+    {
+        value: 'valaa02',
+        label: 'aa02',
+        filter: 'bb02',
+        pinyinFilter: '阿阿02'
+    },
+    {
+        value: 'valab01',
+        label: 'ab01',
+        filter: 'bc01',
+        pinyinFilter: '阿布01'
+    },
+    {
+        value: 'valab02',
+        label: 'ab02',
+        filter: 'bc02',
+        pinyinFilter: '阿布02'
+    },
+    {
+        value: 'valac01',
+        label: 'ac01',
+        filter: 'bd01',
+        pinyinFilter: '阿财01'
+    },
+    {
+        value: 'valac02',
+        label: 'ac02',
+        filter: 'bd02',
+        pinyinFilter: '阿财02'
+    },
+    {
+        value: 'valb01',
+        label: 'b01',
+        filter: 'c01',
+        pinyinFilter: '布01'
+    },
+    {
+        value: 'valb02',
+        label: 'b02',
+        filter: 'c02',
+        pinyinFilter: '布02'
+    },
+    {
+        value: 'valba01',
+        label: 'ba01',
+        filter: 'cb01',
+        pinyinFilter: '布阿01'
+    },
+    {
+        value: 'valba02',
+        label: 'ba02',
+        filter: 'cb02',
+        pinyinFilter: '布阿02'
+    },
+    {
+        value: 'valbb01',
+        label: 'bb01',
+        filter: 'cc01',
+        pinyinFilter: '布布01'
+    },
+    {
+        value: 'valbb02',
+        label: 'bb02',
+        filter: 'cc02',
+        pinyinFilter: '布布02'
+    },
+    {
+        value: 'valbc01',
+        label: 'bc01',
+        filter: 'cd01',
+        pinyinFilter: '布财01'
+    },
+    {
+        value: 'valbc02',
+        label: 'bc02',
+        filter: 'cd01',
+        pinyinFilter: '布财02'
+    },
+    {
+        value: 'val啊01',
+        label: '啊01',
+        filter: 'a01',
+        pinyinFilter: '啊01'
+    },
+    {
+        value: 'val啊02',
+        label: '啊02',
+        filter: 'a02',
+        pinyinFilter: '啊02'
+    },
+    {
+        value: 'val啊啊01',
+        label: '啊啊01',
+        filter: 'aa01',
+        pinyinFilter: '啊啊01'
+    },
+    {
+        value: 'val啊啊02',
+        label: '啊啊02',
+        filter: 'aa02',
+        pinyinFilter: '啊啊02'
+    },
+    {
+        value: 'val啊不01',
+        label: '啊不01',
+        filter: 'ab01',
+        pinyinFilter: '啊不01'
+    },
+    {
+        value: 'val啊不02',
+        label: '啊不02',
+        filter: 'ab02',
+        pinyinFilter: '啊不02'
+    },
+    {
+        value: 'val啊才01',
+        label: '啊才01',
+        filter: 'ac01',
+        pinyinFilter: '啊才01'
+    },
+    {
+        value: 'val啊才02',
+        label: '啊才02',
+        filter: 'ac02',
+        pinyinFilter: '啊才02'
     }
+];
+/**
+ * basic funciton
+ */
+new $.jqcSelectBox({
+    optionData: basicDataSrc, // data source
+    element: $('#selectboxBasic'),
+    dataName: 'basic'
 });
 
+/**
+ * default value & width
+ */
 new $.jqcSelectBox({
-    width: 160, // option panel width,
-    defaultVal: 'abfj',
-    element: $('#selectboxTestRight'),
-    dataName: 'test'
+    optionData: basicDataSrc, // data source
+    defaultVal: 'val啊才01',
+    element: $('#selectboxDefaultAndWidth'),
+    dataName: 'basic',
+    width: 160
 });
 
+/**
+ * Basic & filter
+ */
 new $.jqcSelectBox({
-    width: 160, // option panel width,
-    element: $('#selectboxTestMulti'),
-    dataName: 'test',
-    supportMultiSelect: true,
-    updateDataSource: function () {
-        return [{
-            value: 'fgc',
-            label: 'fgc'
-        }, {
-            value: 'def',
-            label: 'edf'
-        }, {
-            value: 'fgd',
-            label: 'fgd'
-        }, {
-            value: 'fge',
-            label: 'fge'
-        }, {
-            value: 'fgf',
-            label: 'fgf'
-        }, {
-            value: 'fgfa',
-            label: 'fgfa'
-        }, {
-            value: 'fgfb',
-            label: 'fgfb'
-        }, {
-            value: 'fgfc',
-            label: 'fgfc'
-        }, {
-            value: 'fgfd',
-            label: 'fgfd'
-        }, {
-            value: 'fgfe',
-            label: 'fgfe'
-        }, {
-            value: 'fgff',
-            label: 'fgff'
-        }, {
-            value: 'fgfg',
-            label: 'fgfg'
-        }, {
-            value: 'fgfh',
-            label: 'fgfh'
-        }, {
-            value: 'fgfi',
-            label: 'fgfi'
-        }, {
-            value: 'fgfj',
-            label: 'fgfj'
-        }, {
-            value: 'fgfk',
-            label: 'fgfk'
-        }]
-    }
+    optionData: basicFilterDataSrc, // data source
+    defaultVal: 'val啊才01',
+    element: $('#selectboxBasicFilter'),
+    dataName: 'basicFilter',
+    width: 160
 });
 
+/**
+ * pinyin support
+ */
+var pinyinParser = new $.jqcPinyin();
 new $.jqcSelectBox({
-    width: 160, // option panel width,
-    element: $('#selectboxTestMultiRight'),
-    dataName: 'test',
+    optionData: basicDataSrc, // data source
+    defaultVal: 'val啊才01',
+    element: $('#selectboxPinyin'),
+    dataName: 'basicPinyin',
+    supportPinYin: true,
+    pinyinParser: pinyinParser
+});
+
+/**
+ * pinyin support & pinyinFilter
+ */
+new $.jqcSelectBox({
+    optionData: pinyinFilterDataSrc, // data source
+    defaultVal: 'val啊才01',
+    element: $('#selectboxPinyinFilter'),
+    dataName: 'basicPinyinFilter',
+    supportPinYin: true,
+    pinyinParser: pinyinParser
+});
+
+/**
+ * extesion options
+ */
+new $.jqcSelectBox({
+    optionData: pinyinFilterDataSrc, // data source
+    extOption: [{
+        value: 'hello',
+        label: 'hello world',
+        filter: 'hello world',
+        pinyinFilter: 'hello world'
+    }, {
+        value: 0,
+        label: '全选',
+        filter: 0,
+        pinyinFilter: 0
+    }],
+    defaultVal: 0,
+    element: $('#selectboxExtOption'),
+    dataName: 'extOption',
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    width: 160
+});
+
+/**
+ * multiple select
+ */
+new $.jqcSelectBox({
+    defaultVal: 'val啊不01,vala01',
+    element: $('#selectboxMulti'),
+    dataName: 'basicPinyinFilter',
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    width: 160,
     supportMultiSelect: true
+});
+
+var adaterData = [{
+    id: '000723',
+    name: '建信稳定添利债券C'
+}, {
+    id: '004870',
+    name: '融通创业板指数C'
+}, {
+    id: '000727',
+    name: '融通健康产业灵活配置混合'
+}, {
+    id: '000728',
+    name: '工银目标收益一年定开债券'
+}, {
+    id: '000729',
+    name: '建信中小盘先锋股票'
+}, {
+    id: '002100',
+    name: '国富新活力混合C'
+}, {
+    id: '000720',
+    name: '南方稳利1年定期开放债券C'
+}, {
+    id: '002607',
+    name: '融通增裕债券'
+}, {
+    id: '512300',
+    name: '南方中证500医药卫生ETF'
+}, {
+    id: '513030',
+    name: '华安德国30(DAX)ETF(QDII)'
+}, {
+    id: '512310',
+    name: '南方中证500工业ETF'
+}, {
+    id: '002609',
+    name: '博时泰和债券C'
+}, {
+    id: '002608',
+    name: '博时泰和债券A'
+}, {
+    id: '002603',
+    name: '工银瑞丰纯债半年定开债券'
+}, {
+    id: '002602',
+    name: '易方达丰惠混合'
+}];
+
+/**
+ * adater
+ */
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterData,
+        adapter: {
+            value: 'id',
+            label: 'name',
+            filter: 'id',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: '002602',
+    element: $('#selectboxAdapter'),
+    dataName: 'adaterData',
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    width: 160,
+    supportMultiSelect: true
+});
+
+/**
+ * fuzzy
+ */
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterData,
+        adapter: {
+            value: 'id',
+            label: 'name',
+            filter: 'id',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: '002602',
+    element: $('#selectboxFuzzy'),
+    dataName: 'fuzzyMatch',
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    width: 160,
+    supportMultiSelect: true,
+    supportFuzzyMatch: true
 });
