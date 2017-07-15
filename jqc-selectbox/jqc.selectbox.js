@@ -92,7 +92,12 @@
     };
 
     OptionCore.prototype.fuzzyFilter = function (inputTerm) {
-        var _inputTerm = $.trim(inputTerm);
+        var _inputTerm = null;
+        if (inputTerm.isMulti) {
+            _inputTerm = $.trim(inputTerm.value);
+        } else {
+            _inputTerm = $.trim(inputTerm);
+        }
         if (0 == _inputTerm.length) {
             return this.undefinedOption;
         }
@@ -104,33 +109,57 @@
 
         var optionList = '',
             size = this.sortedFilterCache.length;
-        if (matched) {
+        if (!inputTerm.isMulti && matched) {
             return matched;
         } else {
             var counter = 1,
                 matched = false;
+            var repeatCheck = new Map();
             for (var i = 0; i < size; i++) {
                 var _data = this.sortedFilterCache[i];
                 if (_data.filter.indexOf(_inputTerm) >= 0) {
+                    matched = true;
                     if ($.isArray(_data.data)) {
                         var __data = _data.data;
                         for (var j in __data) {
-                            optionList = optionList.concat(__data[j].label);
+                            var __dataTmp = __data[j];
+                            var __key = __dataTmp.data[__dataTmp.key];
+                            if (inputTerm.isMulti && inputTerm.selected.has(__key)) {
+                                continue;
+                            }
+                            if (repeatCheck.has(__key)) {
+                                continue;
+                            }
+                            repeatCheck.set(__key, null);
+                            optionList = optionList.concat(__dataTmp.label);
+                            counter++;
                         }
                     } else {
-                        optionList = optionList.concat(_data.data.label);
+                        var __data = _data.data;
+                        var __key = __data.data[__data.key];
+                        if (inputTerm.isMulti && inputTerm.selected.has(__key)) {
+                            continue;
+                        }
+                        if (repeatCheck.has(__key)) {
+                            continue;
+                        }
+                        repeatCheck.set(__key, null);
+                        optionList = optionList.concat(__data.label);
+                        counter++;
                     }
                     if (MAX_OPTION_COUNT == counter) {
                         break;
                     }
-                    counter++;
-                    matched = true;
                 }
             }
         }
 
         if (matched) {
-            this.optionsCache.set(_inputTerm, optionList);
+            if (inputTerm.isMulti) {
+                this.optionsCache.set(_inputTerm, 1);
+            } else {
+                this.optionsCache.set(_inputTerm, optionList);
+            }
 
             return optionList;
         } else {
@@ -187,38 +216,43 @@
         }
 
         var counter = 0;
+        var repeatCheck = new Map();
         for (var i = start; i < size; i++) {
             var _data = this.sortedFilterCache[i];
-            if (_data.filter.startsWith(_inputTerm)) {
+            if (_data.filter.substr(0, _inputTerm.length) === _inputTerm) {
+                if (-1 == realStart) {
+                    realStart = i;
+                }
                 if ($.isArray(_data.data)) {
                     var __data = _data.data;
                     for (var j in __data) {
                         var __dataTmp = __data[j];
-                        if (inputTerm.isMulti && inputTerm.selected.has(__dataTmp.data[__dataTmp.key])) {
-                            if (-1 == realStart) {
-                                realStart = i;
-                            }
+                        var __key = __dataTmp.data[__dataTmp.key];
+                        if (inputTerm.isMulti && inputTerm.selected.has(__key)) {
                             continue;
                         }
+                        if (repeatCheck.has(__key)) {
+                            continue;
+                        }
+                        repeatCheck.set(__key, null);
                         optionList = optionList.concat(__dataTmp.label);
                         counter++;
                     }
                 } else {
                     var __data = _data.data;
-                    if (inputTerm.isMulti && inputTerm.selected.has(__data.data[__data.key])) {
-                        if (-1 == realStart) {
-                            realStart = i;
-                        }
+                    var __key = __data.data[__data.key];
+                    if (inputTerm.isMulti && inputTerm.selected.has(__key)) {
                         continue;
                     }
+                    if (repeatCheck.has(__key)) {
+                        continue;
+                    }
+                    repeatCheck.set(__key, null);
                     optionList = optionList.concat(__data.label);
                     counter++;
                 }
                 if (MAX_OPTION_COUNT == counter) {
                     break;
-                }
-                if (-1 == realStart) {
-                    realStart = i;
                 }
             } else if (-1 < realStart) {
                 break;
@@ -376,7 +410,8 @@
             element: null,
             fuzzyMatch: false,
             filterDelay: 256,
-            select: null, // call back for selecting event,
+            onSelect: null, // call back on selecting event,
+            afterSelect: null, // call back after selecting event
             updateDataSource: null // update data source
         };
         if (arguments.length > 0) {
@@ -451,9 +486,10 @@
                 that.valueCache.set(element, null);
             });
         }
-        var triggerByMe = false;
+        var triggerByMe = 0,
+            onSelecting = false;
         that.el.focus(function (e) {
-            triggerByMe = true;
+            triggerByMe = 1;
             var maxWidth = $('body').width();
             that.container.css('top', elOffset.top + elOuterHeight + 2);
             if (that.container.outerWidth() + elOffset.left + 5 > maxWidth) {
@@ -474,18 +510,11 @@
             switch (e.keyCode) {
                 case $.ui.keyCode.ENTER:
                     that.optionUL.find('li.jqcSelectboxSelected').trigger('click');
-                    selectIndex = null;
-                    return;
+                    break;
                 case $.ui.keyCode.ESCAPE:
                     {
-                        if (that.options.select) {
-                            var result = [];
-                            that.currentVal.split(',').forEach(function (element) {
-                                result.push(that.optionCore.get(element).data);
-                            });
-                            that.options.select(result);
-                        }
-                        that.container.hide();
+                        triggerByMe = 4;
+                        $(document).trigger('click');
                         return;
                     }
                 case $.ui.keyCode.UP:
@@ -506,7 +535,6 @@
                                     selected: that.valueCache,
                                     isMulti: true
                                 }));
-                                optionSize = that.optionUL.find('li').length;
                                 selectIndex = null;
                             }
                             filterHandler = null;
@@ -515,6 +543,7 @@
                         return;
                     }
             }
+            optionSize = that.optionUL.find('li').length;
             if (optionSize === 0) {
                 return;
             }
@@ -523,24 +552,29 @@
         });
 
         $(document).click(function (e) {
-            if (!triggerByMe) {
-                if (that.options.select) {
+            if (1 !== triggerByMe && 2 !== triggerByMe) {
+                that.container.hide();
+                if (onSelecting && that.options.afterSelect) {
+                    onSelecting = false;
                     var result = [];
                     that.currentVal.split(',').forEach(function (element) {
-                        result.push(that.optionCore.get(element).data);
+                        var _element = that.optionCore.get(element);
+                        if (_element) {
+                            result.push(_element.data);
+                        }
                     });
-                    that.options.select(result);
+                    that.options.afterSelect(result)
                 }
-                that.container.hide();
             }
-            triggerByMe = false;
+
+            triggerByMe = 3;
         });
 
         that.container.click(function (e) {
-            triggerByMe = true;
+            triggerByMe = 2;
         });
 
-        that.optionUL.click(function (e) {
+        that.optionUL.on('click', 'li', function (e) {
             var eTarget = $(e.target);
             var _val = eTarget.attr('value');
             if (null == _val || undefined == _val) {
@@ -556,12 +590,23 @@
                 } else {
                     that.el.val(_val);
                 }
+                if (that.options.onSelect) {
+                    var result = [];
+                    that.currentVal.split(',').forEach(function (element) {
+                        var _element = that.optionCore.get(element);
+                        if (_element) {
+                            result.push(_element.data);
+                        }
+                    });
+                    that.options.onSelect(result, that.optionCore.get(_val).data, true);
+                }
                 that.valueCache.set(_val, null);
                 eTarget.remove();
+                onSelecting = true;
             }
         });
 
-        that.optionSelected.click(function (e) {
+        that.optionSelected.on('click', 'li', function (e) {
             var eTarget = $(e.target);
             var _val = eTarget.attr('value');
             if (null == _val || undefined == _val) {
@@ -569,16 +614,24 @@
             }
             _val = _val.substr(1);
             that.valueCache.delete(_val);
-            var result = '';
+            var resultStr = '',
+                result = [];
             that.valueCache.forEach(function (val, key) {
-                result = result.concat(',').concat(key);
+                if (that.options.onSelect) {
+                    result.push(that.optionCore.get(key).data);
+                }
+                resultStr = resultStr.concat(',').concat(key);
             });
-            if (result.length === 0) {
+            if (resultStr.length === 0) {
                 that.el.val(UNDEFINED_OPTION);
             } else {
-                that.el.val(result.substr(1));
+                that.el.val(resultStr.substr(1));
             }
-            that.optionUL.append(eTarget);
+            if (that.options.onSelect) {
+                that.options.onSelect(result, that.optionCore.get(_val).data, false);
+            }
+            that.optionUL.append(that.optionCore.get(_val).label);
+            onSelecting = true;
         });
 
 
@@ -706,7 +759,7 @@
             triggerByMe = true;
         });
 
-        that.optionUL.click(function (e) {
+        that.optionUL.on('click', 'li', function (e) {
             var _val = $(e.target).attr('value');
             if (null == _val || undefined == _val) {
                 return;
@@ -715,8 +768,11 @@
                 return;
             }
             _val = _val.substr(1);
-            if (that.options.select) {
-                that.options.select(that.optionCore.get(_val).data);
+            if (that.options.onSelect) {
+                that.options.onSelect(that.optionCore.get(_val).data);
+            }
+            if (that.options.afterSelect) {
+                that.options.afterSelect(that.optionCore.get(_val).data);
             }
             that.input.val('');
             that.optionUL.empty();
@@ -755,25 +811,32 @@
     $.jqcSelectBox.prototype = new $.jqcBaseElement();
     $.jqcSelectBox.prototype.constructor = $.jqcSelectBox;
     $.jqcSelectBox.prototype.updateCurrentVal = function (val) {
-        if (val === UNDEFINED_OPTION) {
-            this.currentVal = undefined;
-            return '';
-        }
         this.currentVal = val;
         if (this.options.supportMultiSelect) {
-            var result = '',
-                label = '';
-            var _this = this;
-            this.currentVal.split(',').forEach(function (element) {
-                var option = _this.optionCore.get(element);
-                label = label.concat(option.label);
-                result = result.concat(',').concat(option.text);
-            });
-            this.optionSelected.html(label);
-            return result.substr(1);
+            if (this.currentVal === UNDEFINED_OPTION) {
+                this.optionSelected.empty();
+                return '';
+            } else {
+                var result = '',
+                    label = '';
+                var _this = this;
+                this.currentVal.split(',').forEach(function (element) {
+                    var option = _this.optionCore.get(element);
+                    if (option) {
+                        label = label.concat(option.label);
+                        result = result.concat(',').concat(option.text);
+                    }
+                });
+                this.optionSelected.html(label);
+                return result.substr(1);
+            }
         } else {
-            var packageData = this.optionCore.get(this.currentVal);
-            return packageData.text;
+            if (this.currentVal === UNDEFINED_OPTION) {
+                return '';
+            } else {
+                var packageData = this.optionCore.get(this.currentVal);
+                return packageData.text;
+            }
         }
     };
 }(jQuery));

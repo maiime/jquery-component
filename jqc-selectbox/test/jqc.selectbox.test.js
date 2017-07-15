@@ -322,6 +322,17 @@ new $.jqcSelectBox({
     element: $('#selectboxBasic'),
     dataName: 'basic'
 });
+/**
+ * right float & select callback
+ */
+new $.jqcSelectBox({
+    optionData: basicDataSrc, // data source
+    element: $('#selectboxRightSingle'),
+    dataName: 'basic',
+    onSelect: function (item) {
+        console.log(item);
+    }
+});
 
 /**
  * default value & width
@@ -454,6 +465,32 @@ var adaterData = [{
     name: '易方达丰惠混合'
 }];
 
+var updateDataSrc = [{
+    id: '600050',
+    name: '中国联通'
+}, {
+    id: '600054',
+    name: '黄山旅游'
+}, {
+    id: '600834',
+    name: '申通地铁'
+}, {
+    id: '600016',
+    name: '民生银行'
+}, {
+    id: '000001',
+    name: '上证指数'
+}, {
+    id: '600036',
+    name: '招商银行'
+}, {
+    id: '600837',
+    name: '海通证券'
+}, {
+    id: '002602',
+    name: '易方达丰惠混合'
+}];
+
 /**
  * adater
  */
@@ -497,4 +534,90 @@ new $.jqcSelectBox({
     width: 160,
     supportMultiSelect: true,
     supportFuzzyMatch: true
+});
+
+/**
+ * update data source
+ */
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterData,
+        adapter: {
+            value: 'id',
+            label: 'name',
+            filter: 'id',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: '002602',
+    element: $('#selectboxUpdateDataSource'),
+    dataName: 'fuzzyMatch',
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    width: 160,
+    supportMultiSelect: true,
+    supportFuzzyMatch: true,
+    updateDataSource: function () {
+        return updateDataSrc;
+    }
+});
+
+/**
+ * update data source
+ */
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterData,
+        adapter: {
+            value: 'id',
+            label: 'name',
+            filter: 'id',
+            pinyinFilter: 'name'
+        }
+    },
+    extOption: [{
+            id: '111111',
+            name: '扩展银行'
+        },
+        {
+            id: '222222',
+            name: '测试银行'
+        }
+    ],
+    defaultVal: '002602',
+    element: $('#selectboxUpdateSrcExt'),
+    dataName: 'updateSrcWithExt',
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    width: 160,
+    supportMultiSelect: true,
+    supportFuzzyMatch: true,
+    updateDataSource: function () {
+        return updateDataSrc;
+    }
+});
+
+/**
+ * right float & multi & select callback
+ */
+new $.jqcSelectBox({
+    defaultVal: '002602',
+    element: $('#selectboxRightMulti'),
+    dataName: 'updateSrcWithExt',
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    width: 160,
+    supportMultiSelect: true,
+    supportFuzzyMatch: true,
+    updateDataSource: function () {
+        return updateDataSrc;
+    },
+    onSelect: function (result, item, appended) {
+        console.log(result);
+        console.log(item);
+        console.log(appended);
+    },
+    afterSelect: function (result) {
+        console.log(result);
+    }
 });
