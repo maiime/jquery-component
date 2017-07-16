@@ -421,6 +421,9 @@
         if (!this.options.dataName) {
             throw new Error('Must provide a unique data name to identify the same type select box');
         }
+        if (!this.options.element) {
+            throw new Error('Must Binding SelectBox to a text input element.');
+        }
         this.optionCore = optionCoreCache.get(this.options.dataName);
         if (!this.optionCore) {
             this.optionCore = new OptionCore({

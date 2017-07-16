@@ -20,14 +20,141 @@
             <li>前匹配或者任意位置匹配模式</li>
             <li>额外支持中文首字母匹配</li>
             <li>可单选亦可多选</li>
+            <li>JSON数据对象</li>
             <li>零侵入式数据模型</li>
-            <li>本地或服务器端JSON数据均可作为选项数据源</li>
             <li>还可添加扩展选项</li>
             <li>运行时选项更新</li>
             <li>可监听选项值改变的事件</li>
             <li>可监听选定事件</li>
-            <li>多个SelectBox可共享选项数据源</li>
+            <li>多个SelectBox可共享数据</li>
         </ul>
+    </section>
+    <section>
+        <div>参数</div>
+        <table cellspacing="0" border="1" borderColor="#e5e5e5">
+            <tr>
+                <th width="64px">参数</th>
+                <th width="128px">参数类型</th>
+                <th width="64px">是否必须</th>
+                <th width="256px">可选值</th>
+                <th width="64px">默认值</th>
+                <th>说明</th>
+            </tr>
+            <tbody>
+                <tr>
+                    <td>dataName</td>
+                    <td>String</td>
+                    <td>是</td>
+                    <td>合法的变量名</td>
+                    <td></td>
+                    <td>该参数为数据名。在一个页面中，使用同一个dataName的不同SelectBox将共享一份数据，当在一个SelectBox上进行运行时数据更新，所有其他同dataName的SelectBox组件都会得到更新。</td>
+                </tr>
+                <tr>
+                    <td>optionData</td>
+                    <td>JSON Array,<br>JSON Object</td>
+                    <td></td>
+                    <td>合法的数据类型</td>
+                    <td></td>
+                    <td>选项数据源。如使用非标准数据模型，则需提供适配参数。</td>
+                </tr>
+                <tr>
+                    <td>extOption</td>
+                    <td>JSON Array,<br>JSON Object</td>
+                    <td></td>
+                    <td>合法的数据类型，数据模型须与optionData中的数据模型一致。</td>
+                    <td></td>
+                    <td>扩展选项。应对特殊场景。</td>
+                </tr>
+                <tr>
+                    <td>width</td>
+                    <td>Integer</td>
+                    <td></td>
+                    <td>正整数</td>
+                    <td>120</td>
+                    <td>下拉选项展示框的宽度。</td>
+                </tr>
+                <tr>
+                    <td>defaultVal</td>
+                    <td>String,<br>Integer</td>
+                    <td></td>
+                    <td>合法数据值</td>
+                    <td></td>
+                    <td>默认选项值</td>
+                </tr>
+                <tr>
+                    <td>supportPinYin</td>
+                    <td>Boolean</td>
+                    <td></td>
+                    <td></td>
+                    <td>false</td>
+                    <td>是否支持中文首字母检索。如需支持，则必须提供pinyinParser</td>
+                </tr>
+                <tr>
+                    <td>pinyinParser</td>
+                    <td>Object</td>
+                    <td></td>
+                    <td>支持firstAlphabet接口的对象</td>
+                    <td></td>
+                    <td>中文转中文首字母的分析器</td>
+                </tr>
+                <tr>
+                    <td>supportMultiSelect</td>
+                    <td>Boolean</td>
+                    <td></td>
+                    <td></td>
+                    <td>false</td>
+                    <td>是否支持多选</td>
+                </tr>
+                <tr>
+                    <td>element</td>
+                    <td>jQuery Object</td>
+                    <td>是</td>
+                    <td></td>
+                    <td></td>
+                    <td>一个input[type=text] jQuery Object</td>
+                </tr>
+                <tr>
+                    <td>fuzzyMatch</td>
+                    <td>Boolean</td>
+                    <td></td>
+                    <td></td>
+                    <td>false</td>
+                    <td>默认为前匹配，如果该值设为true，则更改为任意位置匹配</td>
+                </tr>
+                <tr>
+                    <td>filterDelay</td>
+                    <td>Integer</td>
+                    <td></td>
+                    <td></td>
+                    <td>256</td>
+                    <td>用户输入触发检索的延迟时间</td>
+                </tr>
+                <tr>
+                    <td>onSelect</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>用户选择某选项时的事件回调</td>
+                </tr>
+                <tr>
+                    <td>afterSelect</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>用户选定后的事件回调</td>
+                </tr>
+                <tr>
+                    <td>updateDataSource</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>用于运行时允许用户刷新当前选项数据</td>
+                </tr>
+            </tbody>
+        </table>
     </section>
 </body>
 
