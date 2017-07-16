@@ -474,6 +474,8 @@
             that.operationBar.append(that.refresher);
         }
         that.container.append(that.operationBar).append(that.optionUL).append(that.optionGap).append(that.optionSelected);
+        var bodyTopPadding = parseFloat($(document.body).css('padding-top'));
+        var bodyTopPaddingSize = isNaN(bodyTopPadding) ? 0 : bodyTopPadding;
         var elOffset = that.el.offset(),
             elOuterHeight = that.el.outerHeight(),
             elOuterWidth = that.el.outerWidth();
@@ -494,7 +496,7 @@
         that.el.focus(function (e) {
             triggerByMe = 1;
             var maxWidth = $('body').width();
-            that.container.css('top', elOffset.top + elOuterHeight + 2);
+            that.container.css('top', elOffset.top + elOuterHeight + 2 + bodyTopPaddingSize);
             if (that.container.outerWidth() + elOffset.left + 5 > maxWidth) {
                 that.container.css('right', maxWidth - (elOffset.left + elOuterWidth - 15));
             } else {
@@ -680,6 +682,8 @@
             that.operationBar.append(that.refresher);
         }
         that.container.append(that.operationBar).append(that.optionUL);
+        var bodyTopPadding = parseFloat($(document.body).css('padding-top'));
+        var bodyTopPaddingSize = isNaN(bodyTopPadding) ? 0 : bodyTopPadding;
         var elOffset = that.el.offset(),
             elOuterHeight = that.el.outerHeight(),
             elOuterWidth = that.el.outerWidth();
@@ -697,7 +701,7 @@
         that.el.focus(function (e) {
             triggerByMe = true;
             var maxWidth = $('body').width();
-            that.container.css('top', elOffset.top + elOuterHeight + 2);
+            that.container.css('top', elOffset.top + elOuterHeight + 2 + bodyTopPaddingSize);
             if (that.container.outerWidth() + elOffset.left + 5 > maxWidth) {
                 that.container.css('right', maxWidth - (elOffset.left + elOuterWidth - 15));
             } else {
