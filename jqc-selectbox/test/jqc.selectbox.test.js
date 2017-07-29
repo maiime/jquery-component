@@ -557,8 +557,8 @@ new $.jqcSelectBox({
     width: 160,
     supportMultiSelect: true,
     supportFuzzyMatch: true,
-    updateDataSource: function () {
-        return updateDataSrc;
+    updateDataSource: function (callback) {
+        callback(updateDataSrc);
     }
 });
 
@@ -592,8 +592,8 @@ new $.jqcSelectBox({
     width: 160,
     supportMultiSelect: true,
     supportFuzzyMatch: true,
-    updateDataSource: function () {
-        return updateDataSrc;
+    updateDataSource: function (callback) {
+        callback(updateDataSrc);
     }
 });
 
@@ -609,8 +609,8 @@ new $.jqcSelectBox({
     width: 160,
     supportMultiSelect: true,
     supportFuzzyMatch: true,
-    updateDataSource: function () {
-        return updateDataSrc;
+    updateDataSource: function (callback) {
+        callback(updateDataSrc);
     },
     onSelect: function (result, item, appended) {
         console.log(result);

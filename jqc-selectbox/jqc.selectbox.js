@@ -14,7 +14,7 @@
 
     var optionCoreCache = new Map();
     var MAX_OPTION_COUNT = 10;
-    var UNDEFINED_OPTION = '__undefined__';
+    var UNDEFINED_OPTION = '';
 
     function fillMap(mapping, key, data) {
         if (mapping.has(key)) {
@@ -660,11 +660,12 @@
                 if (!that.options.updateDataSource) {
                     return;
                 }
-                var newDataSource = that.options.updateDataSource();
-                if ($.isArray(newDataSource)) {
-                    that.optionCore.updateDataSource(newDataSource);
-                }
-                reset(false);
+                that.options.updateDataSource(function (newDataSource) {
+                    if ($.isArray(newDataSource)) {
+                        that.optionCore.updateDataSource(newDataSource);
+                    }
+                    reset(false);
+                });
             });
         }
     }

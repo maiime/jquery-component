@@ -122,8 +122,8 @@
         }
     };
 
-    $.jqcCache.prototype.refreshDB = function () {
-        init(this, null, false, true);
+    $.jqcCache.prototype.refreshDB = function (callback) {
+        init(this, callback, false, true);
     };
 
     function init(context, callback, notNeedFullRemoteData, replaceWithNew) {
