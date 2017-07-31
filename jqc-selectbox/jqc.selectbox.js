@@ -807,11 +807,12 @@
                 if (!that.options.updateDataSource) {
                     return;
                 }
-                var newDataSource = that.options.updateDataSource();
-                if ($.isArray(newDataSource)) {
-                    that.optionCore.updateDataSource(newDataSource);
-                }
-                reset(false);
+                that.options.updateDataSource(function (newDataSource) {
+                    if ($.isArray(newDataSource)) {
+                        that.optionCore.updateDataSource(newDataSource);
+                    }
+                    reset(false);
+                });
             });
         }
     }
@@ -845,6 +846,11 @@
                 var packageData = this.optionCore.get(this.currentVal);
                 return packageData.text;
             }
+        }
+    };
+    $.jqcSelectBox.prototype.updateDataSource = function (data) {
+        if ($.isArray(data)) {
+            this.optionCore.updateDataSource(data);
         }
     };
 }(jQuery));
