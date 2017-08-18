@@ -603,6 +603,8 @@
                     });
                     that.options.onSelect(result, that.optionCore.get(_val).data, true);
                 }
+                that.input.val('');
+                that.input.focus();
                 that.valueCache.set(_val, null);
                 eTarget.remove();
                 onSelecting = true;
