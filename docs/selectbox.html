@@ -446,8 +446,8 @@ new $.jqcSelectBox({
     supportPinYin: true,
     pinyinParser: pinyinParser,
     supportMultiSelect: true,
-    updateDataSource: function () {
-        return updateDataSource;
+    updateDataSource: function (callback) {
+        return callback(updateDataSource);
     }
 });
 new $.jqcSelectBox({
