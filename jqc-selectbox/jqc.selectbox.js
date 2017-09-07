@@ -474,7 +474,7 @@
             that.operationBar.append(that.refresher);
         }
         that.container.append(that.operationBar).append(that.optionUL).append(that.optionGap).append(that.optionSelected);
-        var elOffset = that.el.offset(),
+        var
             elOuterHeight = that.el.outerHeight(),
             elOuterWidth = that.el.outerWidth();
         that.container.css('width', that.options.width * 2 + 116);
@@ -493,8 +493,9 @@
             onSelecting = false;
         that.el.focus(function (e) {
             triggerByMe = 1;
+            var elOffset = that.el.offset();
             var maxWidth = $('body').width();
-            that.container.css('top', elOffset.top + elOuterHeight + 2 );
+            that.container.css('top', elOffset.top + elOuterHeight + 2);
             if (that.container.outerWidth() + elOffset.left + 5 > maxWidth) {
                 that.container.css('right', maxWidth - (elOffset.left + elOuterWidth - 15));
             } else {
@@ -683,7 +684,7 @@
             that.operationBar.append(that.refresher);
         }
         that.container.append(that.operationBar).append(that.optionUL);
-        var elOffset = that.el.offset(),
+        var
             elOuterHeight = that.el.outerHeight(),
             elOuterWidth = that.el.outerWidth();
         that.container.css('width', that.options.width + 116);
@@ -699,6 +700,7 @@
         var triggerByMe = false;
         that.el.focus(function (e) {
             triggerByMe = true;
+            var elOffset = that.el.offset();
             var maxWidth = $('body').width();
             that.container.css('top', elOffset.top + elOuterHeight + 2);
             if (that.container.outerWidth() + elOffset.left + 5 > maxWidth) {
