@@ -25,15 +25,12 @@
     background-color: #F5F5F5;
     cursor: pointer;
     color: #686868;
+    -moz-padding-start: 6px;
+    -moz-padding-end: 6px;
 }
 
 .jqcSelectboxContainer button:hover {
     color: #000000;
-}
-
-.jqcSelectboxResetter,
-.jqcSelectboxRefresher {
-    width: 28.7px;
 }
 
 .jqcSelectboxContainer input {
