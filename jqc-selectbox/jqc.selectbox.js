@@ -844,7 +844,12 @@
                 return '';
             } else {
                 var packageData = this.optionCore.get(this.currentVal);
-                return packageData.text;
+                if (packageData) {
+                    return packageData.text;
+                } else {
+                    return '';
+
+                }
             }
         }
     };
