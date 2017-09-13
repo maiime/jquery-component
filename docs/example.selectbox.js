@@ -328,5 +328,8 @@ new $.jqcSelectBox({
     },
     afterSelect: function (result) {
         $('#multiCallbackAfterSelect').text('用户选择了股票：'.concat(JSON.stringify(result)));
+    },
+    postClear : function(){
+        console.log("post clear");
     }
 });

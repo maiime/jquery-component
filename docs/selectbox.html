@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width,maximum-scale=2">
     <meta name="description" content="jQuery Component : 基于jQuery的组件库">
     <link rel="stylesheet" type="text/css" media="screen" href="css/component.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="https://rawgit.com/cmanlh/jquery-component/master/jqc-selectbox/css/jqc.selectbox.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/prettify.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="jqc-css/jqc.selectbox.css">
     <link rel="stylesheet" type="text/css" media="screen" href="css/highlight.css">
     <style>
         section>div>input {
@@ -161,6 +162,14 @@
                     <td></td>
                     <td></td>
                     <td>用于运行时允许用户刷新当前选项数据</td>
+                </tr>
+                <tr>
+                    <td>postClear</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>用户点击重置按钮事件的回调</td>
                 </tr>
             </tbody>
         </table>
@@ -558,14 +567,14 @@ new $.jqcSelectBox({
         </pre>
         </section>
     </section>
-    <script src="https://rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-    <script src="https://rawgit.com/cmanlh/jquery-component/master/qunit/jquery-3.1.1.js "></script>
-    <script src="https://rawgit.com/cmanlh/jquery-component/master/qunit/version.js "></script>
-    <script src="https://rawgit.com/cmanlh/jquery-component/master/qunit/keycode.js "></script>
-    <script src="https://rawgit.com/cmanlh/jquery-component/master/jqc-valHooks/jqc.valHooks.js "></script>
-    <script src="https://rawgit.com/cmanlh/jquery-component/master/jqc-baseElement/jqc.baseElement.js "></script>
-    <script src="https://rawgit.com/cmanlh/jquery-component/master/jqc-pinyin/jqc.pinyin.js "></script>
-    <script src="https://rawgit.com/cmanlh/jquery-component/master/jqc-selectbox/jqc.selectbox.js "></script>
+    <script src="js/run_prettify.js"></script>
+    <script src="js/jquery-3.1.1.js "></script>
+    <script src="js/version.js "></script>
+    <script src="js/keycode.js "></script>
+    <script src="jqc-js/jqc.valHooks.js "></script>
+    <script src="jqc-js/jqc.baseElement.js "></script>
+    <script src="jqc-js/jqc.pinyin.js "></script>
+    <script src="jqc-js/jqc.selectbox.js "></script>
     <script src="example.selectbox.js "></script>
 </body>
 
