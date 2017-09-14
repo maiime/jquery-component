@@ -108,16 +108,16 @@
     };
 
     $.jqcCache.prototype.queryAll = function (callback) {
-        if (null == callback || undefined == callback) {
-            throw new Error('has to provide call back function');
-        }
-
         if (this.isInitialled()) {
             if (callback) {
                 callback(this.data);
             }
             return this.data;
         } else {
+            if (null == callback || undefined == callback) {
+                throw new Error('has to provide call back function');
+            }
+            
             init(this, callback, false, this.options.init.replaceWithNew);
         }
     };
