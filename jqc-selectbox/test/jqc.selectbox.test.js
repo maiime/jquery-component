@@ -594,7 +594,8 @@ new $.jqcSelectBox({
     supportFuzzyMatch: true,
     updateDataSource: function (callback) {
         callback(updateDataSrc);
-    }
+    },
+    maxOptionCount: 3
 });
 
 /**

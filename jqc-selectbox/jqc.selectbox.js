@@ -14,7 +14,7 @@
     }
 
     var optionCoreCache = new Map();
-    var MAX_OPTION_COUNT = 10;
+    var DEFAULT_OPTION_COUNT = 10;
     var UNDEFINED_OPTION = '';
 
     function fillMap(mapping, key, data) {
@@ -65,7 +65,8 @@
             extOption: null,
             supportPinYin: false,
             pinyinParser: null,
-            supportFuzzyMatch: false
+            supportFuzzyMatch: false,
+            maxOptionCount: DEFAULT_OPTION_COUNT
         };
         this.option = $.extend(true, {}, defaultOptions, param);
         this.source = null;
@@ -113,7 +114,7 @@
         if (!inputTerm.isMulti && matched) {
             return matched;
         } else {
-            var counter = 1,
+            var counter = 0,
                 matched = false;
             var repeatCheck = new Map();
             for (var i = 0; i < size; i++) {
@@ -148,7 +149,7 @@
                         optionList = optionList.concat(__data.label);
                         counter++;
                     }
-                    if (MAX_OPTION_COUNT == counter) {
+                    if (this.option.maxOptionCount == counter) {
                         break;
                     }
                 }
@@ -252,7 +253,7 @@
                     optionList = optionList.concat(__data.label);
                     counter++;
                 }
-                if (MAX_OPTION_COUNT == counter) {
+                if (this.option.maxOptionCount == counter) {
                     break;
                 }
             } else if (-1 < realStart) {
@@ -409,12 +410,13 @@
             pinyinParser: null,
             supportMultiSelect: false,
             element: null,
-            fuzzyMatch: false,
+            supportFuzzyMatch: false,
             filterDelay: 256,
             onSelect: null, // call back on selecting event,
             afterSelect: null, // call back after selecting event
             updateDataSource: null, // update data source
-            postClear: null // call back after reset button clicked
+            postClear: null, // call back after reset button clicked
+            maxOptionCount: DEFAULT_OPTION_COUNT
         };
         if (arguments.length > 0) {
             $.jqcBaseElement.apply(this, arguments);
@@ -433,7 +435,8 @@
                 extOption: this.options.extOption,
                 supportPinYin: this.options.supportPinYin,
                 pinyinParser: this.options.pinyinParser,
-                supportFuzzyMatch: this.options.supportFuzzyMatch
+                supportFuzzyMatch: this.options.supportFuzzyMatch,
+                maxOptionCount: this.options.maxOptionCount
             }); // data source
             this.optionCore.setup();
             optionCoreCache.set(this.options.dataName, this.optionCore);
