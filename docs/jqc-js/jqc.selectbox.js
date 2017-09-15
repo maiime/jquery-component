@@ -4,12 +4,13 @@
  * Dependent on
  *  + jqc.baseElement.js
  *  + jqc.valHooks.js
+ *  + jqc.uniqueKey.js
  * Optional dependent on
  *  + jqc.pinyin.js
  */
 (function ($) {
-    if (undefined == $.jqcBaseElement || undefined == $.jqcValHooksCtrl) {
-        throw new Error("Need library : jqc.baseElement.js,jqc.valHooks.js");
+    if (undefined == $.jqcBaseElement || undefined == $.jqcValHooksCtrl || undefined == $.jqcUniqueKey) {
+        throw new Error("Need library : jqc.baseElement.js,jqc.valHooks.js,jqc.uniqueKey.js");
     }
 
     var optionCoreCache = new Map();
@@ -441,7 +442,7 @@
         this.el = this.options.element; // the jquery element for the target document node
         this.el.addClass('jqcSelectboxHooks');
         this.typeName = 'jqcSelectBox';
-        this.elementId = 'jqc'.concat(Date.now().toString());
+        this.elementId = 'jqc'.concat($.jqcUniqueKey.fetchIntradayKey());
         this.el.attr($.jqcBaseElement.JQC_ELEMENT_TYPE, this.typeName);
         this.el.attr($.jqcBaseElement.JQC_ELEMENT_ID, this.elementId);
         $.jqcValHooksCtrl.addElement(this);
@@ -655,7 +656,7 @@
         }
         that.resetter.click(function (e) {
             reset(true);
-            if(that.options.postClear){
+            if (that.options.postClear) {
                 that.options.postClear();
             }
         });
@@ -804,7 +805,7 @@
         }
         that.resetter.click(function (e) {
             reset(true);
-            if(that.options.postClear){
+            if (that.options.postClear) {
                 that.options.postClear();
             }
         });
