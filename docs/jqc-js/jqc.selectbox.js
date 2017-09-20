@@ -515,6 +515,17 @@
         var oldVal = null,
             selectIndex = null,
             optionSize = 0;
+        that.input.keydown(function (e) {
+            switch (e.keyCode) {
+                case $.ui.keyCode.TAB:
+                    {
+                        that.container.hide();
+                        that.el.nextAll(":input").first().focus();
+                        e.preventDefault();
+                        return;
+                    }
+            }
+        });
         that.input.keyup(function (e) {
             switch (e.keyCode) {
                 case $.ui.keyCode.ENTER:
@@ -725,6 +736,17 @@
         var oldVal = null,
             selectIndex = null,
             optionSize = 0;
+        that.input.keydown(function (e) {
+            switch (e.keyCode) {
+                case $.ui.keyCode.TAB:
+                    {
+                        that.container.hide();
+                        that.el.nextAll(":input").first().focus();
+                        e.preventDefault();
+                        return;
+                    }
+            }
+        });
         that.input.keyup(function (e) {
             switch (e.keyCode) {
                 case $.ui.keyCode.ENTER:
