@@ -4,16 +4,28 @@
 (function ($) {
     $.jqcFormat = {
         /**
-         * the first version excellent number formatting method from locutus.io
+         * This (modified) excellent number formatting method from locutus.io
          * http://locutus.io/php/strings/number_format/
+         * 
+         * @param float number          : the number to format
+         * @param int decimals          : the number of decimal. Default is 0.
+         * @param string thousands_sep  : the characer to use as a thousands separator. Default is ','.
+         * @param boolean toRound       : round the number. Default is true.
          */
-        number: function (_number, decimals, decPoint, thousandsSep) {
-            _number = (_number + '').replace(/[^0-9+\-Ee.]/g, '')
-            var n = !isFinite(+_number) ? 0 : +_number
-            var prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-            var sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
-            var dec = (typeof decPoint === 'undefined') ? '.' : decPoint
-            var s = ''
+        number: function (_number, options) {
+            var defaultOptions = {
+                decimals: 0,
+                decPoint: '.',
+                thousandsSep: ',',
+                toRound: true
+            };
+            var _options = $.extend(true, {}, defaultOptions, options);
+            _number = (_number + '').replace(/[^0-9+\-Ee.]/g, '');
+            var n = !isFinite(+_number) ? 0 : +_number;
+            var prec = !isFinite(+_options.decimals) ? (_options.toRound ? 0 : 1) : (_options.toRound ? Math.abs(_options.decimals) : Math.abs(_options.decimals) + 1);
+            var sep = _options.thousandsSep;
+            var dec = _options.decPoint;
+            var s = '';
             var toFixedFix = function (n, prec) {
                 var k = Math.pow(10, prec)
                 return '' + (Math.round(n * k) / k)
@@ -27,6 +39,13 @@
             if ((s[1] || '').length < prec) {
                 s[1] = s[1] || ''
                 s[1] += new Array(prec - s[1].length + 1).join('0')
+            }
+            if (!_options.toRound) {
+                if (1 >= (s[1] || '').length) {
+                    s.pop();
+                } else {
+                    s[1] = s[1].substr(0, prec - 1);
+                }
             }
             return s.join(dec)
         }
