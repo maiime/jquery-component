@@ -1,5 +1,8 @@
 QUnit.test("format", function (assert) {
     var numberFormat = $.jqcFormat.number;
+    assert.equal(numberFormat(.1234, {
+        decimals: 3
+    }), '0.123', '.1234 -> 0.123');
     assert.equal(numberFormat(123), '123', '123 -> 123');
     assert.equal(numberFormat(123, {
         decimals: 1
