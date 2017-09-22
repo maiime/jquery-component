@@ -69,15 +69,38 @@
     function setupFormatProcessor(that) {
         that.processing = true;
 
+        var newValue = '';
+        var removedCharNumber = 0;
         var newLength = that.input.value.length;
-        var newValue = that.input.value.replace(TO_BE_REPLACED_REG_EXP, replaceFullWidthChar);
+        var newCursorPosition = that.input.selectionStart;
+        var duplicatePoint = false;
+        for (var i = 0; i < newLength; i++) {
+            var charCode = that.input.value.charCodeAt(i);
+            if (charCode > 47 && charCode < 58) {
+                newValue = newValue.concat(match);
+            } else if (46 == charCode || 12290 == charCode) {
+                if (duplicatePoint) {
+                    
+                    removedCharNumber += newCursorPosition - i;
+                    break;
+                }
+                newValue = newValue.concat('.');
+                duplicatePoint = true;
+            } else if (charCode > 65297 && charCode < 65306) {
+                newValue = newValue.concat(String.fromCharCode(charCode - 65248));
+            } else if (45 == charCode || 65293 == charCode) {
+                newValue = newValue.concat('-');
+            } else if (i < newCursorPosition) {
+                removedCharNumber++;
+            }
+        }
         var newRealLength = newValue.length;
-        var newCursorPosition = that.input.selectionStart - (newLength - newRealLength);
         var pointIdx = newValue.indexOf('.'),
             lastPointIdx = newValue.lastIndexOf('.');
         if (-1 != pointIdx && pointIdx != lastPointIdx) {
             newValue = newValue.substr(0, lastPointIdx);
         }
+        var removedCharNumber = countCommaNumber(newValue, newCursorPosition);
         if (newValue == that.currentVal) {
             that.input.value = that.formatted;
         } else {
@@ -98,22 +121,15 @@
         that.inputting = false;
     }
 
-
-    function replaceFullWidthChar(match, offset, string) {
-        var charCode = match.charCodeAt(0);
-        if (charCode > 47 && charCode < 58) {
-            return match;
-        } else if (44 == charCode) {
-            return ',';
-        } else if (46 == charCode || 12290 == charCode) {
-            return '.';
-        } else if (charCode > 65297 && charCode < 65306) {
-            return String.fromCharCode(charCode - 65248);
-        } else if (45 == charCode || 65293 == charCode) {
-            return '-';
-        } else {
-            return '';
+    function countCommaNumber(string, position) {
+        var num = 0;
+        for (var i = 0; i < position; i++) {
+            if (string.charCodeAt(i) == 44) {
+                num++;
+            }
         }
+
+        return num;
     }
 
     $.jqcInputNumber.prototype = new $.jqcBaseElement();
