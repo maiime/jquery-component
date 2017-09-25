@@ -96,7 +96,7 @@
                     if (i < cursorPosition) {
                         realCursorPosition++;
                     }
-                } else if (46 == charCode || 12290 == charCode) {
+                } else if (46 == charCode || 12290 == charCode || 65294 == charCode) {
                     if (duplicatePoint) {
                         break;
                     }
