@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
+    <meta name="description" content="jQuery Component : 基于jQuery的组件库">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/component.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/prettify.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/highlight.css">
+    <style>
+        section>div>input {
+            padding: 8px 8px;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+        }
+    </style>
+    <title>InputNumber - jQuery Component</title>
+</head>
+
+<body>
+    <div class="title">InputNumber</div>
+    <section>
+        <div class="sectionTitle">功能</div>
+        <ul>
+            <li>自动格式化数值输入，支持中文，全角输入</li>
+        </ul>
+    </section>
+    <section>
+        <div class="sectionTitle">参数</div>
+        <table cellspacing="0" border="1" borderColor="#e5e5e5" style="margin-top:5px;">
+            <tr>
+                <th width="64px">参数</th>
+                <th width="128px">参数类型</th>
+                <th width="64px">是否必须</th>
+                <th width="256px">可选值</th>
+                <th width="64px">默认值</th>
+                <th>说明</th>
+            </tr>
+            <tbody>
+                <tr>
+                    <td>element</td>
+                    <td>jQuery Object</td>
+                    <td>是</td>
+                    <td></td>
+                    <td></td>
+                    <td>一个input[type=text] jQuery Object</td>
+                </tr>
+                <tr>
+                    <td>decimals</td>
+                    <td>Integer</td>
+                    <td></td>
+                    <td></td>
+                    <td>0</td>
+                    <td>小数位数，不做四舍五入处理</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <div class="sectionTitle">示例</div>
+        <section>
+            <div class="exampleTitle">整数输入</div>
+            <div><input name="basic"></div>
+            <pre class="prettyprint linenums">
+new $.jqcInputNumber({
+    element: $('input[name=basic]')
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">保留两位小数</div>
+            <div><input name="withDecimals"></div>
+            <pre class="prettyprint linenums">
+new $.jqcInputNumber({
+    element: $('input[name=withDecimals]'),
+    decimals: 2
+});
+        </pre>
+        </section>
+    </section>
+    <script src="js/run_prettify.js"></script>
+    <script src="js/jquery-3.1.1.js "></script>
+    <script src="js/version.js "></script>
+    <script src="js/keycode.js "></script>
+    <script src="jqc-js/jqc.baseElement.js "></script>
+    <script src="jqc-js/jqc.valHooks.js "></script>
+    <script src="jqc-js/jqc.uniqueKey.js "></script>
+    <script src="jqc-js/jqc.format.js "></script>
+    <script src="jqc-js/jqc.inputNumber.js "></script>
+    <script src="exampleJs/inputNumber.js "></script>
+</body>
+
+</html>
