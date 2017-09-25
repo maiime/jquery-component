@@ -21,7 +21,6 @@
             $.jqcBaseElement.apply(this, arguments);
         }
         this.options = $.extend(true, {}, defaultOptions, param);
-        this.inputDelay = 200;
         this.el = this.options.element;
         this.input = this.el.get(0);
         this.typeName = 'jqcInputNumber';
@@ -61,13 +60,8 @@
             if (!that.inputting) {
                 that.inputting = true;
             }
-
-            if (null != inputHanlder) {
-                clearTimeout(inputHanlder);
-            }
-            inputHanlder = setTimeout(function () {
-                setupFormatProcessor(that);
-            }, that.inputDelay);
+            
+            setupFormatProcessor(that);
         });
     }
 
