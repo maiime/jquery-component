@@ -891,4 +891,10 @@
             this.optionCore.updateDataSource(data);
         }
     };
+
+    superDestroy = $.jqcSelectBox.prototype.destroy;
+    $.jqcSelectBox.prototype.destroy = function () {
+        superDestroy.apply(this);
+        this.container.remove();
+    };
 }(jQuery));

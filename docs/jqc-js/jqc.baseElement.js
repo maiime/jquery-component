@@ -3,6 +3,7 @@
         this.typeName = null;
         this.elementId = null;
         this.currentVal = null;
+        this.subElementList = [];
     }
 
     $.jqcBaseElement.JQC_ELEMENT_ID = "jqcElementId";
@@ -24,5 +25,15 @@
         this.currentVal = val;
 
         return this.currentVal;
+    };
+
+    $.jqcBaseElement.prototype.destroy = function () {
+        this.subElementList.forEach(function (element) {
+            element.destroy();
+        });
+    };
+
+    $.jqcBaseElement.prototype.subElementRegister = function (element) {
+        this.subElementList.push(element);
     };
 }(jQuery));
