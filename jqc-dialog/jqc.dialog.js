@@ -27,8 +27,13 @@
 
     function DialogDomGenerator(param) {
         var defaultOptions = {
-            modal: true, // is it a modal box. Default is true
+            modal: true // is it a modal box. Default is true
         };
+        this.container = $('<div class="jqcDialogContainer" style="display:none;>');
+        this.titleBar = $('<div class="jqcDialogTitleBar">');
+        this.title = $('<span class="jqcDialogTitle">');
+        this.closeBtn = $('<span class="jqcDialogCloseBtn">');
+        this.minimunBtn = $('<span class="jqcDialogMinimunBtn">');
     }
 
     $.jqcDialog = function (param) {
