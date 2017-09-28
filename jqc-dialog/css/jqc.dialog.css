@@ -1,0 +1,45 @@
+@charset "UTF-8";
+.jqcDialogContainer {
+    z-index: 101;
+    box-shadow: 0 0 3px #e9e9e9;
+    border-radius: 3px;
+}
+
+.jqcDialogTitleBar {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 8px 0 8px 16px;
+    cursor: move;
+}
+
+.jqcDialogTitle {
+    overflow: hidden;
+    font-weight: bold;
+}
+
+.jqcDialogMinimunBtn,
+.jqcDialogCloseBtn {
+    float: right;
+    background-repeat: no-repeat;
+    background-position: 4px 4px;
+    width: 24px;
+    height: 24px;
+    margin: 0 8px 0 0;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.jqcDialogMinimunBtn:hover,
+.jqcDialogCloseBtn:hover {
+    background-color: #F5F5F5;
+}
+
+.jqcDialogCloseBtn {
+    background-image: url("images/dialog-close.png")
+}
+
+.jqcDialogMinimunBtn {
+    background-image: url("images/dialog-minimun.png")
+}
