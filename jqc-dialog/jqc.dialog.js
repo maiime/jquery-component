@@ -34,6 +34,7 @@
         this.title = $('<span class="jqcDialogTitle">');
         this.closeBtn = $('<span class="jqcDialogCloseBtn">');
         this.minimunBtn = $('<span class="jqcDialogMinimunBtn">');
+        this.
     }
 
     $.jqcDialog = function (param) {
