@@ -52,3 +52,5 @@
         });
     };
 }(jQuery));
+//http://www.cnblogs.com/NNUF/archive/2012/04/02/2430132.html
+//https://javascript.info/mouse-drag-and-drop
