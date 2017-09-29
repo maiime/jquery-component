@@ -33,19 +33,22 @@
         that.options = $.extend(true, {}, defaultOptions, param);
 
         var readyToDrag = false;
-        var x = y = 0;
         that.options.dragHandler.mousedown(function (e) {
-            x = e.pageX, y = e.pageY;
+            console.log('mousedown to true');
             readyToDrag = true;
         });
-        that.options.dragHandler.mouseup(function () {
-            readyToDrag = false;
+        that.options.dragHandler.on('mouseup mouseenter', function () {
+            console.log('mouseup');
+            if (readyToDrag) {
+                console.log('mouseup to false');
+                readyToDrag = false;
+            }
         });
         that.options.dragHandler.mousemove(function (e) {
-            var offset = that.options.movableBox.offset();
-
-            that.options.movableBox.css('top', offset.top + e.pageY - y);
-            y = e.pageY;
+            if (readyToDrag) {
+                that.options.movableBox.css('top', e.pageY - that.options.dragHandler.outerHeight() / 2);
+                that.options.movableBox.css('left', e.pageX - that.options.dragHandler.outerWidth() / 2);
+            }
         });
     };
 }(jQuery));
