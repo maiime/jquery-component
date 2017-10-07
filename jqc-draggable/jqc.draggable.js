@@ -15,42 +15,37 @@
 */
 /**
  * enable dom node draggable function
- * 
- * Dependent on
- *  + jqc.location.js
  */
 (function ($) {
-    if (undefined == $.location) {
-        throw new Error("Need library : jqc.location.js");
-    }
-
     $.jqcDraggable = function (param) {
         var defaultOptions = {
             dragHandler: null, // the drag handler
-            movableBox: null // move box when drag
+            movableBox: null // the target moable box when drag
         };
         var that = this;
         that.options = $.extend(true, {}, defaultOptions, param);
+        var dom = $(document);
 
-        var readyToDrag = false;
-        that.options.dragHandler.mousedown(function (e) {
-            console.log('mousedown to true');
-            readyToDrag = true;
-        });
-        that.options.dragHandler.on('mouseup mouseenter', function () {
-            console.log('mouseup');
-            if (readyToDrag) {
-                console.log('mouseup to false');
-                readyToDrag = false;
-            }
-        });
-        that.options.dragHandler.mousemove(function (e) {
-            if (readyToDrag) {
-                that.options.movableBox.css('top', e.pageY - that.options.dragHandler.outerHeight() / 2);
-                that.options.movableBox.css('left', e.pageX - that.options.dragHandler.outerWidth() / 2);
-            }
+        that.options.dragHandler.on('mousedown.jqcDraggable', function (e) {
+            dom.on('mousemove.jqcDraggable', function (e) {
+                var _top = e.pageY - that.options.dragHandler.outerHeight() / 2,
+                    _left = e.pageX - that.options.dragHandler.outerWidth() / 2;
+                _top = _top < 0 ? 0 : _top;
+                _left = _left < 0 ? 0 : _left;
+
+                var movableBoxH = that.options.movableBox.outerHeight(),
+                    movableBoxW = that.options.movableBox.outerWidth();
+                _top = (_top + movableBoxH) > window.innerHeight ? window.innerHeight - movableBoxH : _top;
+                _left = (_left + movableBoxW) > window.innerWidth ? window.innerWidth - movableBoxW : _left;
+
+                that.options.movableBox.css('top', _top);
+                that.options.movableBox.css('left', _left);
+            });
+
+            that.options.dragHandler.on('mouseup.jqcDraggable', function (e) {
+                that.options.dragHandler.off('mouseup.jqcDraggable');
+                dom.off('mousemove.jqcDraggable');
+            });
         });
     };
 }(jQuery));
-//http://www.cnblogs.com/NNUF/archive/2012/04/02/2430132.html
-//https://javascript.info/mouse-drag-and-drop
