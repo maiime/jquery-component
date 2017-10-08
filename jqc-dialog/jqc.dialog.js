@@ -19,22 +19,34 @@
  * Dependent on
  *  + jqc.baseElement.js
  *  + jqc.uniqueKey.js
+ *  + jqc.draggable.js
  */
 (function ($) {
-    if (undefined == $.jqcBaseElement || undefined == $.jqcUniqueKey) {
-        throw new Error("Need library : jqc.baseElement.js,jqc.uniqueKey.js");
+    if (undefined == $.jqcBaseElement || undefined == $.jqcUniqueKey || undefined == $.jqcDraggable) {
+        throw new Error("Need library : jqc.baseElement.js,jqc.uniqueKey.js,jqc.draggable.js");
     }
 
     function DialogDomGenerator(param) {
         var defaultOptions = {
             modal: true // is it a modal box. Default is true
         };
-        this.container = $('<div class="jqcDialogContainer" style="display:none;>');
-        this.titleBar = $('<div class="jqcDialogTitleBar">');
-        this.title = $('<span class="jqcDialogTitle">');
-        this.closeBtn = $('<span class="jqcDialogCloseBtn">');
-        this.minimunBtn = $('<span class="jqcDialogMinimunBtn">');
-        this.
+        var that = this;
+
+        that.title = $('<span class="jqcDialogTitle">');
+        that.closeBtn = $('<span class="jqcDialogCloseBtn">');
+        that.minimunBtn = $('<span class="jqcDialogMinimunBtn">');
+
+        that.titleBar = $('<div class="jqcDialogTitleBar">');
+        that.titleBar.append(that.title).append(that.closeBtn).append(that.minimunBtn);
+
+        that.content = $('<div class="jqcDialogContent">');
+
+        that.resizeHandleS = $('<div class="jqcDialogResizeHandleS">');
+        that.resizeHandleE = $('<div class="jqcDialogResizeHandleE">');
+        that.resizeHandleSE = $('<div class="jqcDialogResizeHandleSE">');
+
+        that.container = $('<div class="jqcDialogContainer" style="display:none;">');
+        that.container.append(that.titleBar).append(that.content).append(that.resizeHandleS).append(that.resizeHandleE).append(that.resizeHandleSE).appendTo('body');
     }
 
     $.jqcDialog = function (param) {
@@ -46,7 +58,8 @@
             $.jqcBaseElement.apply(this, arguments);
         }
         this.options = $.extend(true, {}, defaultOptions, param);
-    }
+        new DialogDomGenerator();
+    };
 
     $.jqcDialog.prototype = new $.jqcBaseElement();
     $.jqcDialog.prototype.constructor = $.jqcDialog;
