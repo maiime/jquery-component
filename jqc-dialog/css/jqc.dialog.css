@@ -41,8 +41,8 @@
     background-image: url("images/dialog-close.png")
 }
 
-.jqcDialogMinimunBtn {
-    background-image: url("images/dialog-minimun.png")
+.jqcDialogMinimizeBtn {
+    background-image: url("images/dialog-minimize.png")
 }
 
 .jqcDialogResizeHandleS {

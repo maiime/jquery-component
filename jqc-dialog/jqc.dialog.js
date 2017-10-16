@@ -26,7 +26,7 @@
         throw new Error("Need library : jqc.baseElement.js,jqc.uniqueKey.js,jqc.draggable.js");
     }
 
-    function DialogDomGenerator(param) {
+    function DialogDom(param) {
         var defaultOptions = {
             modal: true // is it a modal box. Default is true
         };
@@ -34,10 +34,10 @@
 
         that.title = $('<span class="jqcDialogTitle">');
         that.closeBtn = $('<span class="jqcDialogCloseBtn">');
-        that.minimunBtn = $('<span class="jqcDialogMinimunBtn">');
+        that.minimizeBtn = $('<span class="jqcDialogMinimizeBtn">');
 
         that.titleBar = $('<div class="jqcDialogTitleBar">');
-        that.titleBar.append(that.title).append(that.closeBtn).append(that.minimunBtn);
+        that.titleBar.append(that.title).append(that.closeBtn).append(that.minimizeBtn);
 
         that.content = $('<div class="jqcDialogContent">');
 
@@ -47,6 +47,43 @@
 
         that.container = $('<div class="jqcDialogContainer" style="display:none;">');
         that.container.append(that.titleBar).append(that.content).append(that.resizeHandleS).append(that.resizeHandleE).append(that.resizeHandleSE).appendTo('body');
+
+        bindEventForDialogDom(that);
+    }
+
+    DialogDom.prototype.show = function () {
+        var that = this;
+        that.container.show();
+    };
+
+    DialogDom.prototype.close = function () {
+        var that = this;
+
+    };
+
+    DialogDom.prototype.minimize = function () {
+        var that = this;
+        that.hide();
+    };
+
+    DialogDom.prototype.hide = function () {
+        var that = this;
+        that.container.hide();
+    };
+
+    function bindEventForDialogDom(dom) {
+        dom.closeBtn.on('click', function (e) {
+            dom.close();
+        });
+
+        dom.minimizeBtn.on('click', function (e) {
+            dom.minimize();
+        });
+
+        new $.jqcDraggable({
+            dragHandler: dom.titleBar,
+            movableBox: dom.container
+        });
     }
 
     $.jqcDialog = function (param) {
@@ -57,10 +94,26 @@
         if (arguments.length > 0) {
             $.jqcBaseElement.apply(this, arguments);
         }
-        this.options = $.extend(true, {}, defaultOptions, param);
-        new DialogDomGenerator();
+
+        var that = this;
+        that.options = $.extend(true, {}, defaultOptions, param);
+        that.dom = new DialogDom();
     };
 
     $.jqcDialog.prototype = new $.jqcBaseElement();
     $.jqcDialog.prototype.constructor = $.jqcDialog;
+
+    $.jqcDialog.prototype.show = function (param) {
+        var that = this;
+        that.dom.show();
+    };
+
+    $.jqcDialog.prototype.close = function (param) {
+
+    };
+
+    $.jqcDialog.prototype.hide = function (param) {
+        var that = this;
+        that.dom.hide();
+    };
 }(jQuery));

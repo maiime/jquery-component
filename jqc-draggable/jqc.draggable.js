@@ -34,7 +34,7 @@
                 var _top = e.pageY - that.options.dragHandler.outerHeight() / 2,
                     _left = e.pageX - that.options.dragHandler.outerWidth() / 2;
                 _top = _top < 0 ? 0 : _top;
-                _left = _left < -movableBoxW + 100 ? -movableBoxW + 100 : _left;
+                _left = _left < -movableBoxW + 50 ? -movableBoxW + 50 : _left;
 
                 _top = (_top + movableBoxH) > window.innerHeight ? window.innerHeight - movableBoxH : _top;
                 _left = (_left + movableBoxW) > window.innerWidth ? window.innerWidth - movableBoxW : _left;
