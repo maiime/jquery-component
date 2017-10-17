@@ -26,10 +26,11 @@
         throw new Error("Need library : jqc.baseElement.js,jqc.uniqueKey.js,jqc.draggable.js");
     }
 
+    var DialogDomDefaultOptions = {
+        modal: true // is it a modal box. Default is true
+    };
+
     function DialogDom(param) {
-        var defaultOptions = {
-            modal: true // is it a modal box. Default is true
-        };
         var that = this;
 
         that.title = $('<span class="jqcDialogTitle">');
