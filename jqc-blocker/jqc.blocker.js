@@ -27,13 +27,13 @@
 
     const BLOCKER_CACHE = [];
     $.jqcBlocker = function (param) {
-        if (arguments.length > 0) {
-            $.jqcBaseElement.apply(this, arguments);
-        }
-
         var that = BLOCKER_CACHE.pop();
         if (that) {
             return that;
+        }
+
+        if (arguments.length > 0) {
+            $.jqcBaseElement.apply(this, arguments);
         }
 
         that = this;
