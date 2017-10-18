@@ -59,16 +59,17 @@
      * 
      * @param {*} param 
      */
+    var OPTION_DEFAULT_OPTIONS = {
+        source: null,
+        extOption: null,
+        supportPinYin: false,
+        pinyinParser: null,
+        supportFuzzyMatch: false,
+        maxOptionCount: DEFAULT_OPTION_COUNT
+    };
+
     function OptionCore(param) {
-        var defaultOptions = {
-            source: null,
-            extOption: null,
-            supportPinYin: false,
-            pinyinParser: null,
-            supportFuzzyMatch: false,
-            maxOptionCount: DEFAULT_OPTION_COUNT
-        };
-        this.option = $.extend(true, {}, defaultOptions, param);
+        this.option = $.extend(true, {}, OPTION_DEFAULT_OPTIONS, param);
         this.source = null;
         this.optionMapping = new Map();
         this.sortedFilterCache = [];
@@ -399,29 +400,29 @@
         }
     };
 
+    var BOX_DEFAULT_OPTIONS = {
+        dataName: null, // for the same data type, in one application, should have the same name
+        optionData: null, // data source
+        extOption: null, // extension options
+        width: 120, // option panel width
+        defaultVal: null,
+        supportPinYin: false, // for chinese
+        pinyinParser: null,
+        supportMultiSelect: false,
+        element: null,
+        supportFuzzyMatch: false,
+        filterDelay: 256,
+        onSelect: null, // call back on selecting event,
+        afterSelect: null, // call back after selecting event
+        updateDataSource: null, // update data source
+        postClear: null, // call back after reset button clicked
+        maxOptionCount: DEFAULT_OPTION_COUNT
+    };
     $.jqcSelectBox = function (param) {
-        var defaultOptions = {
-            dataName: null, // for the same data type, in one application, should have the same name
-            optionData: null, // data source
-            extOption: null, // extension options
-            width: 120, // option panel width
-            defaultVal: null,
-            supportPinYin: false, // for chinese
-            pinyinParser: null,
-            supportMultiSelect: false,
-            element: null,
-            supportFuzzyMatch: false,
-            filterDelay: 256,
-            onSelect: null, // call back on selecting event,
-            afterSelect: null, // call back after selecting event
-            updateDataSource: null, // update data source
-            postClear: null, // call back after reset button clicked
-            maxOptionCount: DEFAULT_OPTION_COUNT
-        };
         if (arguments.length > 0) {
             $.jqcBaseElement.apply(this, arguments);
         }
-        this.options = $.extend(true, {}, defaultOptions, param);
+        this.options = $.extend(true, {}, BOX_DEFAULT_OPTIONS, param);
         if (!this.options.dataName) {
             throw new Error('Must provide a unique data name to identify the same type select box');
         }
