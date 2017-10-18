@@ -26,95 +26,104 @@
         throw new Error("Need library : jqc.baseElement.js,jqc.uniqueKey.js,jqc.draggable.js");
     }
 
-    var DialogDomDefaultOptions = {
-        modal: true // is it a modal box. Default is true
-    };
+    function renderDialog(dialog) {
+        dialog.title = $('<span class="jqcDialogTitle">');
+        dialog.closeBtn = $('<span class="jqcDialogCloseBtn" title="close">');
+        dialog.minimizeBtn = $('<span class="jqcDialogMinimizeBtn" title="minimize">');
 
-    function DialogDom(param) {
-        var that = this;
+        dialog.titleBar = $('<div class="jqcDialogTitleBar">');
+        dialog.titleBar.append(dialog.title).append(dialog.closeBtn).append(dialog.minimizeBtn);
 
-        that.title = $('<span class="jqcDialogTitle">');
-        that.closeBtn = $('<span class="jqcDialogCloseBtn">');
-        that.minimizeBtn = $('<span class="jqcDialogMinimizeBtn">');
+        dialog.content = $('<div class="jqcDialogContent">');
 
-        that.titleBar = $('<div class="jqcDialogTitleBar">');
-        that.titleBar.append(that.title).append(that.closeBtn).append(that.minimizeBtn);
+        // dialog.resizeHandleS = $('<div class="jqcDialogResizeHandleS" title="resize">');
+        // dialog.resizeHandleE = $('<div class="jqcDialogResizeHandleE" title="resize">');
+        // dialog.resizeHandleSE = $('<div class="jqcDialogResizeHandleSE" title="resize">');
 
-        that.content = $('<div class="jqcDialogContent">');
-
-        that.resizeHandleS = $('<div class="jqcDialogResizeHandleS">');
-        that.resizeHandleE = $('<div class="jqcDialogResizeHandleE">');
-        that.resizeHandleSE = $('<div class="jqcDialogResizeHandleSE">');
-
-        that.container = $('<div class="jqcDialogContainer" style="display:none;">');
-        that.container.append(that.titleBar).append(that.content).append(that.resizeHandleS).append(that.resizeHandleE).append(that.resizeHandleSE).appendTo('body');
-
-        bindEventForDialogDom(that);
+        dialog.container = $('<div class="jqcDialogContainer" style="display:none;">');
+        dialog.container.append(dialog.titleBar).append(dialog.content).append(dialog.resizeHandleS).appendTo('body');
     }
 
-    DialogDom.prototype.show = function () {
-        var that = this;
-        that.container.show();
-    };
-
-    DialogDom.prototype.close = function () {
-        var that = this;
-
-    };
-
-    DialogDom.prototype.minimize = function () {
-        var that = this;
-        that.hide();
-    };
-
-    DialogDom.prototype.hide = function () {
-        var that = this;
-        that.container.hide();
-    };
-
-    function bindEventForDialogDom(dom) {
-        dom.closeBtn.on('click', function (e) {
-            dom.close();
+    function bindEventForDialog(dialog) {
+        dialog.closeBtn.on('click', function (e) {
+            dialog.close();
         });
 
-        dom.minimizeBtn.on('click', function (e) {
-            dom.minimize();
+        dialog.minimizeBtn.on('click', function (e) {
+            dialog.minimize();
         });
 
         new $.jqcDraggable({
-            dragHandler: dom.titleBar,
-            movableBox: dom.container
+            dragHandler: dialog.titleBar,
+            movableBox: dialog.container
         });
     }
 
-    $.jqcDialog = function (param) {
-        var defaultOptions = {
-            element: null, // the jquery element for the target input,
-            decimals: 0 // the number of decimal
-        };
-        if (arguments.length > 0) {
-            $.jqcBaseElement.apply(this, arguments);
-        }
+    function renderBiz(dialog) {
+        dialog.title.html(dialog.options.title);
+        dialog.container.width(dialog.options.width);
+        dialog.content.html(dialog.options.content);
+    }
 
-        var that = this;
-        that.options = $.extend(true, {}, defaultOptions, param);
-        that.dom = new DialogDom();
+    var DIALOG_DEFAULT_OPTIONS = {
+        modal: true, // is it a modal box. Default is true
+        width: 680,
+        content: null, // content that appended to dialog
+        title: null, // dialog title
+        beforeClose: null, // callback before dialog close
+        afterClose: null, // callback after dialog close
+        beforeOpen: null, // callback before dialog open
+        afterOpen: null // callback after dialog open
+    };
+    const DIALOG_CACHE = [];
+
+    $.jqcDialog = function (param) {
+        var that = DIALOG_CACHE.pop();
+        if (!that) {
+            if (arguments.length > 0) {
+                $.jqcBaseElement.apply(this, arguments);
+            }
+
+            var that = this;
+            that.options = $.extend(true, {}, DIALOG_DEFAULT_OPTIONS, param);
+            renderDialog(that);
+            bindEventForDialog(that);
+        }
+        renderBiz(that);
     };
 
     $.jqcDialog.prototype = new $.jqcBaseElement();
     $.jqcDialog.prototype.constructor = $.jqcDialog;
 
+    $.jqcDialog.prototype.open = function (param) {
+        var that = this;
+        that.show();
+    };
+
     $.jqcDialog.prototype.show = function (param) {
         var that = this;
-        that.dom.show();
+        that.container.show();
     };
 
     $.jqcDialog.prototype.close = function (param) {
+        var that = this;
+        if (that.options.beforeClose) {
+            that.options.beforeClose();
+        }
+        that.hide();
+        if (that.options.afterClose) {
+            that.options.afterClose();
+        }
 
     };
 
     $.jqcDialog.prototype.hide = function (param) {
         var that = this;
-        that.dom.hide();
+        that.container.hide();
+    };
+
+    $.jqcDialog.prototype.minimize = function (param) {
+        var that = this;
+        that.container.hide();
     };
 }(jQuery));

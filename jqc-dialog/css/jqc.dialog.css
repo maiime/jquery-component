@@ -20,7 +20,7 @@
     font-weight: bold;
 }
 
-.jqcDialogMinimunBtn,
+.jqcDialogMinimizeBtn,
 .jqcDialogCloseBtn {
     float: right;
     background-repeat: no-repeat;
@@ -45,7 +45,8 @@
     background-image: url("images/dialog-minimize.png")
 }
 
-.jqcDialogResizeHandleS {
+
+/* .jqcDialogResizeHandleS {
     bottom: 0px;
     height: 3px;
     cursor: s-resize;
@@ -67,4 +68,4 @@
     height: 8px;
     cursor: se-resize;
     position: absolute;
-}
+} */
