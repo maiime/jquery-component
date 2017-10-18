@@ -34,19 +34,21 @@
     var popupZindexStack = [];
     $.jqcZindex.popupMgr = {
         fetchIndex: function () {
-            var last = popupZindexStack.pop(),
-                current;
-            if (last) {
-                current = last + 1;
-                popupZindexStack.push(last);
-            } else {
-                current = $.jqcZindex.popup;
-            }
-            popupZindexStack.push(current);
-            return current;
+            do {
+                var last = popupZindexStack.pop();
+                if (undefined == last) {
+                    break;
+                } else if (last) {
+                    popupZindexStack.push(true);
+                    break;
+                }
+            } while (true);
+            popupZindexStack.push(true);
+
+            return popupZindexStack.length + $.jqcZindex.popup - 1;
         },
-        returnIndex: function () {
-            popupZindexStack.pop();
+        returnIndex: function (zindex) {
+            popupZindexStack[zindex - $.jqcZindex.popup] = false;
         }
     };
 }(jQuery));
