@@ -26,7 +26,11 @@
         that.options = $.extend(true, {}, defaultOptions, param);
         var dom = $(document);
 
+        that.options.dragHandler.addClass('jqcDraggable');
         that.options.dragHandler.on('mousedown.jqcDraggable', function (e) {
+            if (e.target.className.indexOf('jqcDraggable') < 0) {
+                return;
+            }
             dom.on('mousemove.jqcDraggable', function (e) {
                 var movableBoxH = that.options.movableBox.outerHeight(),
                     movableBoxW = that.options.movableBox.outerWidth();
