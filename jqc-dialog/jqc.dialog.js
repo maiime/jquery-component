@@ -26,6 +26,105 @@
         throw new Error("Need library : jqc.baseElement.js,jqc.uniqueKey.js,jqc.draggable.js");
     }
 
+    function MinimizeBar(param) {
+        var that = this;
+        that.mgr = param.mgr;
+        that.bar = $('<div class="jqcDialogMinimizeBar" style="display:none;">placeHolder</div>');
+        that.bar.css('z-index', $.jqcZindex.popup + 99);
+        that.bar.on('click', function (e) {
+            that.hide();
+            that.mgr.reLayout();
+            that.mgr.idle.push(that);
+            that.dialog.container.show();
+            that.mgr.onboardLength--;
+        });
+        $('body').append(that.bar);
+
+        return that;
+    }
+
+    MinimizeBar.prototype.bindDialog = function (dialog) {
+        var that = this;
+        that.dialog = dialog;
+        that.bar.html(dialog.options.title);
+    };
+
+    MinimizeBar.prototype.show = function () {
+        var that = this;
+        that.bar.show();
+        var oldCss = that.bar.css('box-shadow');
+        var blinkChoice = ["0 0 3px red", oldCss];
+        blink(that.bar, 0, blinkChoice);
+    };
+
+    function blink(bar, times, blinkChoice) {
+        if (6 == times) {
+            return;
+        }
+        bar.css('box-shadow', blinkChoice[times % 2]);
+        setTimeout(function () {
+            blink(bar, times + 1, blinkChoice);
+        }, 500);
+    }
+
+    MinimizeBar.prototype.reLayout = function (bottom, left) {
+        var that = this;
+        that.bar.css('bottom', bottom);
+        that.bar.css('left', left);
+    }
+
+    MinimizeBar.prototype.hide = function () {
+        var that = this;
+        that.bar.hide();
+    };
+
+    function MinimizeBarMgr() {
+        var that = this;
+        var bar = new MinimizeBar({
+            mgr: that
+        });
+        that.idle = [];
+        that.onboardLength = 0;
+        that.idle.push(bar);
+
+        that.barWidth = bar.bar.outerWidth();
+        that.barHeight = bar.bar.outerHeight();
+        that.maxColumn = Math.floor(window.innerWidth / (that.barWidth + 5));
+
+        $(window).on('resize', function (e) {
+            var newMaxColumn = Math.floor(window.innerWidth / (that.barWidth + 5));
+            if (newMaxColumn != that.maxColumn) {
+                that.maxColumn = newMaxColumn;
+                that.reLayout();
+            }
+        });
+
+        return that;
+    }
+
+    MinimizeBarMgr.prototype.bindDialog = function (dialog) {
+        var that = this;
+        var bar = that.idle.pop();
+        if (!bar) {
+            bar = new MinimizeBar({
+                mgr: that
+            });
+        }
+        that.onboardLength++;
+
+        var row = Math.floor((that.onboardLength - 1) / that.maxColumn);
+        var col = Math.floor(that.onboardLength % that.maxColumn);
+        var _col = 0 == col ? that.maxColumn : col;
+
+        bar.reLayout(row * (that.barHeight + 5), (_col - 1) * (that.barWidth + 5));
+        bar.bindDialog(dialog);
+        bar.show();
+    };
+
+    MinimizeBarMgr.prototype.reLayout = function () {
+
+    };
+
     function renderDialog(dialog) {
         dialog.title = $('<span class="jqcDialogTitle">');
         dialog.closeBtn = $('<span class="jqcDialogCloseBtn" title="close">');
@@ -41,15 +140,15 @@
         // dialog.resizeHandleSE = $('<div class="jqcDialogResizeHandleSE" title="resize">');
 
         dialog.container = $('<div class="jqcDialogContainer" style="display:none;">');
-        dialog.container.append(dialog.titleBar).append(dialog.content).append(dialog.resizeHandleS).appendTo('body');
+        dialog.container.append(dialog.titleBar).append(dialog.content).appendTo('body');
     }
 
     function bindEventForDialog(dialog) {
-        dialog.closeBtn.on('click', function (e) {
+        dialog.closeBtn.on('mousedown click', function (e) {
             dialog.close();
         });
 
-        dialog.minimizeBtn.on('click', function (e) {
+        dialog.minimizeBtn.on('mousedown click', function (e) {
             dialog.minimize();
         });
 
@@ -63,6 +162,9 @@
         dialog.title.html(dialog.options.title);
         dialog.container.width(dialog.options.width);
         dialog.content.html(dialog.options.content);
+        if (dialog.options.modal) {
+            dialog.modalBox = new $.jqcBlocker();
+        }
     }
 
     var DIALOG_DEFAULT_OPTIONS = {
@@ -76,6 +178,7 @@
         afterOpen: null // callback after dialog open
     };
     const DIALOG_CACHE = [];
+    const minimizeBarMgr = new MinimizeBarMgr();
 
     $.jqcDialog = function (param) {
         var that = DIALOG_CACHE.pop();
@@ -88,8 +191,12 @@
             that.options = $.extend(true, {}, DIALOG_DEFAULT_OPTIONS, param);
             renderDialog(that);
             bindEventForDialog(that);
+        } else {
+            that.options = $.extend(true, {}, DIALOG_DEFAULT_OPTIONS, param);
         }
         renderBiz(that);
+
+        return that;
     };
 
     $.jqcDialog.prototype = new $.jqcBaseElement();
@@ -97,11 +204,11 @@
 
     $.jqcDialog.prototype.open = function (param) {
         var that = this;
-        that.show();
-    };
-
-    $.jqcDialog.prototype.show = function (param) {
-        var that = this;
+        if (that.options.modal) {
+            that.modalBox.show();
+        }
+        that.zidex = $.jqcZindex.popupMgr.fetchIndex();
+        that.container.css('z-index', that.zidex);
         that.container.show();
     };
 
@@ -110,20 +217,20 @@
         if (that.options.beforeClose) {
             that.options.beforeClose();
         }
-        that.hide();
+        that.container.hide();
+        $.jqcZindex.popupMgr.returnIndex(that.zidex);
+        if (that.options.modal) {
+            that.modalBox.close();
+        }
+        DIALOG_CACHE.push(that);
         if (that.options.afterClose) {
             that.options.afterClose();
         }
-
-    };
-
-    $.jqcDialog.prototype.hide = function (param) {
-        var that = this;
-        that.container.hide();
     };
 
     $.jqcDialog.prototype.minimize = function (param) {
         var that = this;
         that.container.hide();
+        minimizeBarMgr.bindDialog(that);
     };
 }(jQuery));

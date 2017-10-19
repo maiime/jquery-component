@@ -1,5 +1,18 @@
-var dialog = new $.jqcDialog({
-    title: 'hello world',
-    content: '<div>hello world</div><div>hello world</div><div>hello world</div><div>hello world</div><div>hello world</div>'
+var titile = 'hello world';
+var content = '<div>hello world</div><div>hello world</div><div>hello world</div><div>hello world</div><div>hello world</div>';
+$('.btn').on('click', function (e) {
+    var dialog = new $.jqcDialog({
+        title: titile,
+        content: content,
+        modal: false
+    });
+    dialog.open();
 });
-dialog.show();
+
+$('.modelBtn').on('click', function (e) {
+    var dialog = new $.jqcDialog({
+        title: titile,
+        content: content
+    });
+    dialog.open();
+});
