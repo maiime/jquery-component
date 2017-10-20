@@ -18,7 +18,6 @@
  * 
  * Dependent on
  *  + jqc.baseElement.js
- *  + jqc.uniqueKey.js
  *  + jqc.draggable.js
  */
 (function ($) {
