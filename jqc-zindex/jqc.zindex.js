@@ -49,6 +49,13 @@
         },
         returnIndex: function (zindex) {
             popupZindexStack[zindex - $.jqcZindex.popup] = false;
+        },
+        isTop: function (zindex) {
+            if ((popupZindexStack.length + $.jqcZindex.popup - 1) == zindex) {
+                return true;
+            } else {
+                return false;
+            }
         }
     };
 }(jQuery));

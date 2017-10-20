@@ -183,6 +183,17 @@
             dialog.minimize();
         });
 
+        dialog.titleBar.on('mousedown click', function (e) {
+            if (e.target.className.indexOf('jqcDialogTitleBar') < 0) {
+                return;
+            }
+            if (!$.jqcZindex.popupMgr.isTop(dialog.zindex)) {
+                $.jqcZindex.popupMgr.returnIndex(dialog.zindex);
+                dialog.zindex = $.jqcZindex.popupMgr.fetchIndex();
+                dialog.container.css('z-index', dialog.zindex);
+            }
+        });
+
         new $.jqcDraggable({
             dragHandler: dialog.titleBar,
             movableBox: dialog.container
@@ -248,8 +259,8 @@
         if (that.options.modal) {
             that.modalBox.show();
         }
-        that.zidex = $.jqcZindex.popupMgr.fetchIndex();
-        that.container.css('z-index', that.zidex);
+        that.zindex = $.jqcZindex.popupMgr.fetchIndex();
+        that.container.css('z-index', that.zindex);
         that.container.show();
     };
 
@@ -259,7 +270,7 @@
             that.options.beforeClose();
         }
         that.container.hide();
-        $.jqcZindex.popupMgr.returnIndex(that.zidex);
+        $.jqcZindex.popupMgr.returnIndex(that.zindex);
         if (that.options.modal) {
             that.modalBox.close();
         }
