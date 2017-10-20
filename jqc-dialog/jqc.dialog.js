@@ -135,10 +135,6 @@
 
         dialog.content = $('<div class="jqcDialogContent">');
 
-        // dialog.resizeHandleS = $('<div class="jqcDialogResizeHandleS" title="resize">');
-        // dialog.resizeHandleE = $('<div class="jqcDialogResizeHandleE" title="resize">');
-        // dialog.resizeHandleSE = $('<div class="jqcDialogResizeHandleSE" title="resize">');
-
         dialog.container = $('<div class="jqcDialogContainer" style="display:none;">');
         dialog.container.append(dialog.titleBar).append(dialog.content).appendTo('body');
     }

@@ -57,28 +57,3 @@
     position: absolute;
     margin: 3px;
 }
-
-
-/* .jqcDialogResizeHandleS {
-    bottom: 0px;
-    height: 3px;
-    cursor: s-resize;
-}
-
-.jqcDialogResizeHandleE {
-    top: 0px;
-    right: 0px;
-    width: 3px;
-    height: 100%;
-    cursor: e-resize;
-    position: absolute;
-}
-
-.jqcDialogResizeHandleSE {
-    right: 0px;
-    bottom: 0px;
-    width: 8px;
-    height: 8px;
-    cursor: se-resize;
-    position: absolute;
-} */
