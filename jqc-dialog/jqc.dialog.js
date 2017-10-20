@@ -33,7 +33,12 @@
         that.bar.css('z-index', $.jqcZindex.popup + 99);
         that.bar.on('click', function (e) {
             that.hide();
-            that.mgr.reLayout();
+            if (that.index != that.mgr.onboardLength) {
+                that.mgr.onboard[that.index - 1] = false;
+                that.mgr.reLayout();
+            } else {
+                that.mgr.onboard.pop();
+            }
             that.mgr.idle.push(that);
             that.dialog.container.show();
             that.mgr.onboardLength--;
@@ -52,8 +57,13 @@
     MinimizeBar.prototype.show = function () {
         var that = this;
         that.bar.show();
+        that.blink();
+    };
+
+    MinimizeBar.prototype.blink = function () {
+        var that = this;
         var oldCss = that.bar.css('box-shadow');
-        var blinkChoice = ["0 0 3px red", oldCss];
+        var blinkChoice = ["0 0 15px red", oldCss];
         blink(that.bar, 0, blinkChoice);
     };
 
@@ -84,6 +94,7 @@
             mgr: that
         });
         that.idle = [];
+        that.onboard = [];
         that.onboardLength = 0;
         that.idle.push(bar);
 
@@ -111,6 +122,8 @@
             });
         }
         that.onboardLength++;
+        bar.index = that.onboardLength;
+        that.onboard[bar.index - 1] = bar;
 
         var row = Math.floor((that.onboardLength - 1) / that.maxColumn);
         var col = Math.floor(that.onboardLength % that.maxColumn);
@@ -122,7 +135,21 @@
     };
 
     MinimizeBarMgr.prototype.reLayout = function () {
-
+        var that = this;
+        var index = 0;
+        var newOnboard = []
+        that.onboard.forEach(function (e) {
+            if (e) {
+                var row = Math.floor(index / that.maxColumn);
+                var col = Math.floor((index + 1) % that.maxColumn);
+                var _col = 0 == col ? that.maxColumn : col;
+                e.index = index + 1;
+                newOnboard.push(e);
+                e.reLayout(row * (that.barHeight + 5), (_col - 1) * (that.barWidth + 5));
+                index++;
+            }
+        });
+        that.onboard = newOnboard;
     };
 
     function renderDialog(dialog) {
