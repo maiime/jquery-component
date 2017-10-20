@@ -4,7 +4,8 @@ $('.btn').on('click', function (e) {
     var dialog = new $.jqcDialog({
         title: titile,
         content: content,
-        modal: false
+        modal: false,
+        width: Math.random() * 1000
     });
     dialog.open();
 });

@@ -29,9 +29,9 @@
     function MinimizeBar(param) {
         var that = this;
         that.mgr = param.mgr;
-        that.bar = $('<div class="jqcDialogMinimizeBar" style="display:none;">placeHolder</div>');
-        that.bar.css('z-index', $.jqcZindex.popup + 99);
-        that.bar.on('click', function (e) {
+        that.ui = $('<div class="jqcDialogMinimizeBar" style="display:none;">placeHolder</div>');
+        that.ui.css('z-index', $.jqcZindex.popup + 99);
+        that.ui.on('click', function (e) {
             that.hide();
             if (that.index != that.mgr.onboardLength) {
                 that.mgr.onboard[that.index - 1] = false;
@@ -41,9 +41,11 @@
             }
             that.mgr.idle.push(that);
             that.dialog.container.show();
+            that.dialog.minimizeBar = null;
+            that.dialog = null;
             that.mgr.onboardLength--;
         });
-        $('body').append(that.bar);
+        $('body').append(that.ui);
 
         return that;
     }
@@ -51,27 +53,33 @@
     MinimizeBar.prototype.bindDialog = function (dialog) {
         var that = this;
         that.dialog = dialog;
-        that.bar.html(dialog.options.title);
+        that.dialog.minimizeBar = that;
+        that.ui.html(dialog.options.title);
     };
 
     MinimizeBar.prototype.show = function () {
         var that = this;
-        that.bar.show();
+        that.ui.show();
         that.blink();
     };
 
     MinimizeBar.prototype.blink = function () {
         var that = this;
-        var oldCss = that.bar.css('box-shadow');
+        if (true == that.isBlink) {
+            return;
+        }
+        that.isBlink = true;
+        var oldCss = that.ui.css('box-shadow');
         var blinkChoice = ["0 0 15px red", oldCss];
-        blink(that.bar, 0, blinkChoice);
+        blink(that, 0, blinkChoice);
     };
 
     function blink(bar, times, blinkChoice) {
         if (6 == times) {
+            bar.isBlink = false;
             return;
         }
-        bar.css('box-shadow', blinkChoice[times % 2]);
+        bar.ui.css('box-shadow', blinkChoice[times % 2]);
         setTimeout(function () {
             blink(bar, times + 1, blinkChoice);
         }, 500);
@@ -79,13 +87,13 @@
 
     MinimizeBar.prototype.reLayout = function (bottom, left) {
         var that = this;
-        that.bar.css('bottom', bottom);
-        that.bar.css('left', left);
+        that.ui.css('bottom', bottom);
+        that.ui.css('left', left);
     }
 
     MinimizeBar.prototype.hide = function () {
         var that = this;
-        that.bar.hide();
+        that.ui.hide();
     };
 
     function MinimizeBarMgr() {
@@ -98,8 +106,8 @@
         that.onboardLength = 0;
         that.idle.push(bar);
 
-        that.barWidth = bar.bar.outerWidth();
-        that.barHeight = bar.bar.outerHeight();
+        that.barWidth = bar.ui.outerWidth();
+        that.barHeight = bar.ui.outerHeight();
         that.maxColumn = Math.floor(window.innerWidth / (that.barWidth + 5));
 
         $(window).on('resize', function (e) {
@@ -183,10 +191,19 @@
 
     function renderBiz(dialog) {
         dialog.title.html(dialog.options.title);
-        dialog.container.width(dialog.options.width);
+        var width = DIALOG_MIN_WIDTH;
+        if (width < dialog.options.width) {
+            width = dialog.options.width;
+        }
+        dialog.container.width(width);
         dialog.content.html(dialog.options.content);
         if (dialog.options.modal) {
             dialog.modalBox = new $.jqcBlocker();
+            dialog.modalBox.addListener('click.dialog', function (e) {
+                if (dialog.minimizeBar) {
+                    dialog.minimizeBar.blink();
+                }
+            });
         }
     }
 
@@ -202,6 +219,7 @@
     };
     const DIALOG_CACHE = [];
     const minimizeBarMgr = new MinimizeBarMgr();
+    const DIALOG_MIN_WIDTH = 350;
 
     $.jqcDialog = function (param) {
         var that = DIALOG_CACHE.pop();

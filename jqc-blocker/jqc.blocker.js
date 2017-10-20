@@ -37,7 +37,7 @@
         }
 
         that = this;
-        that.ui = $("<div style='display:none;position:absolute;background-color:#777777;opacity: 0.1;filter: alpha(opacity=10);top:0px;left:0px;'>");
+        that.ui = $("<div style='display:none;position:fixed;background-color:#777777;opacity: 0.1;filter: alpha(opacity=10);top:0px;left:0px;'>");
 
         $(window).on('resize.jqcBlocker', function (e) {
             that.resize();
@@ -64,5 +64,13 @@
         that.ui.hide();
         $.jqcZindex.popupMgr.returnIndex(that.zidex);
         BLOCKER_CACHE.push(that);
+    };
+    $.jqcBlocker.prototype.addListener = function (eventType, handler) {
+        var that = this;
+        that.ui.on(eventType, handler);
+    };
+    $.jqcBlocker.prototype.removeListener = function (eventType) {
+        var that = this;
+        that.ui.off(eventType);
     };
 }(jQuery));
