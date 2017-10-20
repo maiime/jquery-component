@@ -22,8 +22,8 @@
  *  + jqc.draggable.js
  */
 (function ($) {
-    if (undefined == $.jqcBaseElement || undefined == $.jqcDraggable) {
-        throw new Error("Need library : jqc.baseElement.js,jqc.draggable.js");
+    if (undefined == $.jqcBaseElement || undefined == $.jqcUniqueKey || undefined == $.jqcDraggable) {
+        throw new Error("Need library : jqc.baseElement.js,jqc.uniqueKey.js,jqc.draggable.js");
     }
 
     function MinimizeBar(param) {

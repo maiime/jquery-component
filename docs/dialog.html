@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width,maximum-scale=2">
+    <meta name="description" content="jQuery Component : 基于jQuery的组件库">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/component.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/prettify.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="jqc-css/jqc.dialog.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/highlight.css">
+    <style>
+        section>div>input {
+            padding: 8px 8px;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+        }
+    </style>
+    <title>Dialog - jQuery Component</title>
+</head>
+
+<body>
+    <div class="catalog">
+        <a href="index.html">主目录 >>></a>
+    </div>
+    <div class="title">SelectBox</div>
+    <section>
+        <div class="sectionTitle">功能</div>
+        <ul>
+            <li>弹出框</li>
+        </ul>
+    </section>
+    <section>
+        <div class="sectionTitle">参数</div>
+        <table cellspacing="0" border="1" borderColor="#e5e5e5" style="margin-top:5px;">
+            <tr>
+                <th width="64px">参数</th>
+                <th width="128px">参数类型</th>
+                <th width="64px">是否必须</th>
+                <th width="256px">可选值</th>
+                <th width="64px">默认值</th>
+                <th>说明</th>
+            </tr>
+            <tbody>
+                <tr>
+                    <td>dataName</td>
+                    <td>String</td>
+                    <td>是</td>
+                    <td>合法的变量名</td>
+                    <td></td>
+                    <td>该参数为数据名。在一个页面中，使用同一个dataName的不同SelectBox将共享一份数据，当在一个SelectBox上进行运行时数据更新，所有其他同dataName的SelectBox组件都会得到更新。</td>
+                </tr>
+                <tr>
+                    <td>optionData</td>
+                    <td>JSON Array,
+                        <br>JSON Object</td>
+                    <td></td>
+                    <td>合法的数据类型</td>
+                    <td></td>
+                    <td>选项数据源。如使用非标准数据模型，则需提供适配参数。</td>
+                </tr>
+                <tr>
+                    <td>extOption</td>
+                    <td>JSON Array,
+                        <br>JSON Object</td>
+                    <td></td>
+                    <td>合法的数据类型，数据模型须与optionData中的数据模型一致。</td>
+                    <td></td>
+                    <td>扩展选项。应对特殊场景。</td>
+                </tr>
+                <tr>
+                    <td>width</td>
+                    <td>Integer</td>
+                    <td></td>
+                    <td>正整数</td>
+                    <td>120</td>
+                    <td>下拉选项展示框的宽度。</td>
+                </tr>
+                <tr>
+                    <td>defaultVal</td>
+                    <td>String,
+                        <br>Integer</td>
+                    <td></td>
+                    <td>合法数据值</td>
+                    <td></td>
+                    <td>默认选项值</td>
+                </tr>
+                <tr>
+                    <td>supportPinYin</td>
+                    <td>Boolean</td>
+                    <td></td>
+                    <td></td>
+                    <td>false</td>
+                    <td>是否支持中文首字母检索。如需支持，则必须提供pinyinParser</td>
+                </tr>
+                <tr>
+                    <td>pinyinParser</td>
+                    <td>Object</td>
+                    <td></td>
+                    <td>支持firstAlphabet接口的对象</td>
+                    <td></td>
+                    <td>中文转中文首字母的分析器</td>
+                </tr>
+                <tr>
+                    <td>supportMultiSelect</td>
+                    <td>Boolean</td>
+                    <td></td>
+                    <td></td>
+                    <td>false</td>
+                    <td>是否支持多选</td>
+                </tr>
+                <tr>
+                    <td>element</td>
+                    <td>jQuery Object</td>
+                    <td>是</td>
+                    <td></td>
+                    <td></td>
+                    <td>一个input[type=text] jQuery Object</td>
+                </tr>
+                <tr>
+                    <td>supportFuzzyMatch</td>
+                    <td>Boolean</td>
+                    <td></td>
+                    <td></td>
+                    <td>false</td>
+                    <td>默认为前匹配，如果该值设为true，则更改为任意位置匹配</td>
+                </tr>
+                <tr>
+                    <td>filterDelay</td>
+                    <td>Integer</td>
+                    <td></td>
+                    <td></td>
+                    <td>256</td>
+                    <td>用户输入触发检索的延迟时间</td>
+                </tr>
+                <tr>
+                    <td>onSelect</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>用户选择某选项时的事件回调</td>
+                </tr>
+                <tr>
+                    <td>afterSelect</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>用户选定后的事件回调</td>
+                </tr>
+                <tr>
+                    <td>updateDataSource</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>用于运行时允许用户刷新当前选项数据</td>
+                </tr>
+                <tr>
+                    <td>postClear</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>用户点击重置按钮事件的回调</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <div class="sectionTitle">示例</div>
+        <section>
+            <div class="exampleTitle">标准数据模型，无需适配参数，基于label字段进行筛选。</div>
+            <div>
+                <input id="basic">
+            </div>
+            <pre class="prettyprint linenums">
+var basicModel = [{
+    value: 'aal',
+    label: '美国航空'
+}, {
+    value: 'aamc',
+    label: '美国航空'
+}, {
+    value: 'aame',
+    label: '美国大西'
+}, {
+    value: 'aan',
+    label: 'Aaron'
+}, {
+    value: 'aaoi',
+    label: 'Applied'
+}, {
+    value: 'aaon',
+    label: '艾伦建材'
+}];
+new $.jqcSelectBox({
+    optionData: basicModel,
+    defaultVal: 'aal',
+    element: $('#basic'),
+    dataName: 'basic',
+    width: 160
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">非标准数据模型，使用适配参数，基于name字段进行筛选。</div>
+            <div>
+                <input id="basicAdapter">
+            </div>
+            <pre class="prettyprint linenums">
+var datasource = [{
+    code: 'aal',
+    name: '美国航空'
+}, {
+    code: 'aamc',
+    name: 'Altisour'
+}, {
+    code: 'aame',
+    name: '美国大西'
+}, {
+    code: 'aan',
+    name: 'Aaron'
+}, {
+    code: 'aaoi',
+    name: 'Applied'
+}, {
+    code: 'aaon',
+    name: '艾伦建材'
+}, {
+    code: 'aap',
+    name: 'Advance'
+}, {
+    code: 'aapc',
+    name: 'Atlantic'
+}, {
+    code: 'aapl',
+    name: '苹果'
+}, {
+    code: 'aat',
+    name: 'American'
+}, {
+    code: 'aau',
+    name: 'Almaden'
+}, {
+    code: 'aav',
+    name: '阿特拉斯'
+}, {
+    code: 'aaxn',
+    name: 'Axon Ent'
+}, {
+    code: 'bbu',
+    name: 'Brookfie'
+}, {
+    code: 'bbva',
+    name: 'Banco Bi'
+}, {
+    code: 'bbw',
+    name: 'Build-A-'
+}, {
+    code: 'bbx',
+    name: '亚特兰大'
+}, {
+    code: 'bbxt',
+    name: 'BBXT'
+}, {
+    code: 'bby',
+    name: '百思买'
+}, {
+    code: 'bc',
+    name: '布朗斯威'
+}, {
+    code: 'bcat',
+    name: 'CORPBANC'
+}, {
+    code: 'bcacu',
+    name: '贝森资本'
+}, {
+    code: 'bcbp',
+    name: 'BCB银行'
+}, {
+    code: 'bcc',
+    name: 'Boise Ca'
+}, {
+    code: 'bcd',
+    name: 'ETFS Blo'
+}, {
+    code: 'bce',
+    name: '加拿大贝'
+}, {
+    code: 'bcei',
+    name: 'Bonanza'
+}];
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name'
+        }
+    },
+    defaultVal: 'bby',
+    element: $('#basicAdapter'),
+    dataName: 'basicAdapter',
+    width: 160
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">非标准数据模型，使用适配参数，同时对code、name字段，以及name字段中的中文首字母进行筛选。</div>
+            <div>
+                <input id="AdavanceAdapter">
+            </div>
+            <pre class="prettyprint linenums">
+// 继续引用数据源datasource
+var pinyinParser = new $.jqcPinyin();
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name',
+            filter: 'code',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: 'bby',
+    element: $('#AdavanceAdapter'),
+    dataName: 'AdavanceAdapter',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">增加扩展选项</div>
+            <div>
+                <input id="extOption">
+            </div>
+            <pre class="prettyprint linenums">
+// 继续引用数据源datasource
+var pinyinParser = new $.jqcPinyin();
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name',
+            filter: 'code',
+            pinyinFilter: 'name'
+        }
+    },
+    extOption: [{
+        code: '000000',
+        name: '全部'
+    }],
+    defaultVal: '000000',
+    element: $('#extOption'),
+    dataName: 'extOption',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">支持多选</div>
+            <div>
+                <input id="multi">
+            </div>
+            <pre class="prettyprint linenums">
+// 继续引用数据源datasource
+var pinyinParser = new $.jqcPinyin();
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name',
+            filter: 'code',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: 'aapc,bby',
+    element: $('#multi'),
+    dataName: 'multi',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    supportMultiSelect: true
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">运行时选项更新、不同组件共享一份选项模型</div>
+            <div>
+                <input id="runtimeUpdate">
+                <input id="brother">
+            </div>
+            <pre class="prettyprint linenums">
+// 继续引用数据源datasource
+var pinyinParser = new $.jqcPinyin();
+var updateDataSource = [{
+    code: 'sh603933',
+    name: '睿能科技'
+}, {
+    code: 'aapc',
+    name: 'Atlantic'
+}, {
+    code: 'bby',
+    name: '百思买'
+}, {
+    code: 'sh603757',
+    name: '大元泵业'
+}, {
+    code: 'sh603305',
+    name: '旭升股份'
+}, {
+    code: 'sz300671',
+    name: '富满电子'
+}, {
+    code: 'sz300649',
+    name: '杭州园林'
+}, {
+    code: 'sz002884',
+    name: '凌霄泵业'
+}, {
+    code: 'sz002802',
+    name: '洪汇新材'
+}, {
+    code: 'sh603595',
+    name: '东尼电子'
+}, {
+    code: 'sh600525',
+    name: '长园集团'
+}, {
+    code: 'sh600476',
+    name: '湘邮科技'
+}, {
+    code: 'sz300673',
+    name: '佩蒂股份'
+}, {
+    code: 'sh600525',
+    name: '长园集团'
+}]
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name',
+            filter: 'code',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: 'aapc,bby',
+    element: $('#runtimeUpdate'),
+    dataName: 'runtimeUpdate',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    supportMultiSelect: true,
+    updateDataSource: function (callback) {
+        return callback(updateDataSource);
+    }
+});
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name',
+            filter: 'code',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: 'aapc,bby',
+    element: $('#brother'),
+    dataName: 'runtimeUpdate',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    supportMultiSelect: true
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">任意位置匹配</div>
+            <div>
+                <input id="fuzzy">
+            </div>
+            <pre class="prettyprint linenums">
+// 继续引用数据源datasource
+var pinyinParser = new $.jqcPinyin();
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name',
+            filter: 'code',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: 'bby',
+    element: $('#fuzzy'),
+    dataName: 'AdavanceAdapter',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    supportFuzzyMatch: true
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">单选时，选择事件回调</div>
+            <p id="singleCallbackOnSelect">改变选择时的结果显示</p>
+            <div>
+                <input id="singleCallback">
+            </div>
+            <pre class="prettyprint linenums">
+// 继续引用数据源datasource
+var pinyinParser = new $.jqcPinyin();
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name',
+            filter: 'code',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: 'bby',
+    element: $('#singleCallback'),
+    dataName: 'AdavanceAdapter',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    supportFuzzyMatch: true,
+    onSelect: function (item) {
+        $('#singleCallbackOnSelect').text('用户选择了股票：'.concat(item.name));
+    }
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">多选时，选择事件回调，重置事件回调</div>
+            <p id="multiCallbackOnSelect">改变选择时的结果显示</p>
+            <p id="multiCallbackAfterSelect">选择完毕后的回调结果显示</p>
+            <div>
+                <input id="multiCallback">
+            </div>
+            <pre class="prettyprint linenums">
+// 继续引用数据源datasource
+var pinyinParser = new $.jqcPinyin();
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name',
+            filter: 'code',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: 'bby',
+    element: $('#singleCallback'),
+    dataName: 'AdavanceAdapter',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    supportFuzzyMatch: true,
+    onSelect: function (item) {
+        $('#singleCallbackOnSelect').text('用户选择了股票：'.concat(item.name));
+    }
+});
+        </pre>
+        </section>
+    </section>
+    <script src="js/run_prettify.js"></script>
+    <script src="js/jquery-3.1.1.js "></script>
+    <script src="js/version.js"></script>
+    <script src="js/keycode.js"></script>
+    <script src="jqc-js/jqc.baseElement.js"></script>
+    <script src="jqc-js/jqc.uniqueKey.js"></script>
+    <script src="jqc-js/jqc.dialog.js"></script>
+    <script src="exampleJs/dialog.js"></script>
+</body>
+
+</html>
