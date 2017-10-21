@@ -21,14 +21,14 @@
  *  + jqc.draggable.js
  */
 (function ($) {
-    if (undefined == $.jqcBaseElement || undefined == $.jqcDraggable) {
-        throw new Error("Need library : jqc.baseElement.js,jqc.draggable.js");
+    if (undefined == $.jqcBaseElement || undefined == $.jqcLang || undefined == $.jqcDraggable) {
+        throw new Error("Need library : jqc.baseElement.js,$.jqc.lang.js,jqc.draggable.js");
     }
 
     function MinimizeBar(param) {
         var that = this;
         that.mgr = param.mgr;
-        that.ui = $('<div class="jqcDialogMinimizeBar" style="display:none;">placeHolder</div>');
+        that.ui = $('<div class="jqcDialogMinimizeBar" style="display:none;" title="'.concat($.jqcLang.DIALOG_MAXIMUN).concat('">placeHolder</div>'));
         that.ui.css('z-index', $.jqcZindex.popup + 99);
         that.ui.on('click', function (e) {
             that.hide();
@@ -161,10 +161,10 @@
 
     function renderDialog(dialog) {
         dialog.title = $('<span class="jqcDialogTitle">');
-        dialog.closeBtn = $('<span class="jqcDialogCloseBtn" title="close">');
-        dialog.minimizeBtn = $('<span class="jqcDialogMinimizeBtn" title="minimize">');
+        dialog.closeBtn = $('<span class="jqcDialogCloseBtn" title="'.concat($.jqcLang.DIALOG_CLOSE).concat('">'));
+        dialog.minimizeBtn = $('<span class="jqcDialogMinimizeBtn" title="'.concat($.jqcLang.DIALOG_MINIMIZE).concat('">'));
 
-        dialog.titleBar = $('<div class="jqcDialogTitleBar">');
+        dialog.titleBar = $('<div class="jqcDialogTitleBar" title="'.concat($.jqcLang.DIALOG_MOVE).concat('">'));
         dialog.titleBar.append(dialog.title).append(dialog.closeBtn).append(dialog.minimizeBtn);
 
         dialog.content = $('<div class="jqcDialogContent">');
