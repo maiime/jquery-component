@@ -206,6 +206,8 @@
             width = dialog.options.width;
         }
         dialog.container.width(width);
+        dialog.container.css('top', dialog.options.position.top);
+        dialog.container.css('left', dialog.options.position.left);
         dialog.content.html(dialog.options.content);
         if (dialog.options.modal) {
             dialog.modalBox = new $.jqcBlocker();
@@ -219,6 +221,10 @@
 
     var DIALOG_DEFAULT_OPTIONS = {
         modal: true, // is it a modal box. Default is true
+        position: {
+            top: 0,
+            left: 0
+        },
         width: 680,
         content: null, // content that appended to dialog
         title: null, // dialog title

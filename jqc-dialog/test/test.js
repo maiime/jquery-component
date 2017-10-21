@@ -5,7 +5,11 @@ $('.btn').on('click', function (e) {
         title: titile,
         content: content,
         modal: false,
-        width: Math.random() * 1000
+        width: Math.random() * 1000,
+        position: {
+            top: Math.random() * 100,
+            left: Math.random() * 1000
+        }
     });
     dialog.open();
 });
