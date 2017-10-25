@@ -261,12 +261,18 @@
 
     $.jqcDialog.prototype.open = function (param) {
         var that = this;
+        if (that.options.beforeOpen) {
+            that.options.beforeOpen();
+        }
         if (that.options.modal) {
             that.modalBox.show();
         }
         that.zindex = $.jqcZindex.popupMgr.fetchIndex();
         that.container.css('z-index', that.zindex);
         that.container.show();
+        if (that.options.afterOpen) {
+            that.options.afterOpen();
+        }
     };
 
     $.jqcDialog.prototype.close = function (param) {
