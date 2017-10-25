@@ -35,8 +35,8 @@
                 var movableBoxH = that.options.movableBox.outerHeight(),
                     movableBoxW = that.options.movableBox.outerWidth();
 
-                var _top = e.pageY - that.options.dragHandler.outerHeight() / 2,
-                    _left = e.pageX - that.options.dragHandler.outerWidth() / 2;
+                var _top = e.pageY - window.scrollY - that.options.dragHandler.outerHeight() / 2,
+                    _left = e.pageX - window.scrollX - that.options.dragHandler.outerWidth() / 2;
                 _top = _top < 0 ? 0 : _top;
                 _left = _left < -movableBoxW + 50 ? -movableBoxW + 50 : _left;
 
