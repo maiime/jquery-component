@@ -228,6 +228,10 @@
         dialog.container.css('top', _top);
         dialog.container.css('left', _left);
         dialog.content.html(dialog.options.content);
+        if (dialog.container.outerHeight() > window.innerHeight) {
+            dialog.heightOverflow = true;
+            dialog.content.height(window.innerHeight - 58);
+        }
         if (dialog.options.modal) {
             dialog.modalBox = new $.jqcBlocker();
             dialog.modalBox.addListener('click.dialog', function (e) {
@@ -297,6 +301,8 @@
             that.options.beforeClose();
         }
         that.container.hide();
+        that.content.height('');
+        that.heightOverflow = false;
         $.jqcZindex.popupMgr.returnIndex(that.zindex);
         if (that.options.modal) {
             that.modalBox.close();
