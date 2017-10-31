@@ -296,4 +296,9 @@
         that.container.hide();
         minimizeBarMgr.bindDialog(that);
     };
+
+    $.jqcDialog.prototype.getContainer = function (param) {
+        var that = this;
+        return that.content;
+    }
 }(jQuery));
