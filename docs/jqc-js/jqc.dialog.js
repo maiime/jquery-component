@@ -206,8 +206,27 @@
             width = dialog.options.width;
         }
         dialog.container.width(width);
-        dialog.container.css('top', dialog.options.position.top);
-        dialog.container.css('left', dialog.options.position.left);
+        var _position = dialog.options.position;
+        var _top = 100,
+            _left = 0;
+        if (typeof (_position) === 'string') {
+            switch (_position.toUpperCase()) {
+                case 'AUTO':
+                default:
+                    {
+                        if (width > window.innerWidth) {
+                            _left = 0;
+                        } else {
+                            _left = (window.innerWidth - width) / 2;
+                        }
+                    }
+            }
+        } else {
+            _top = _position.top;
+            _left = _position.left;
+        }
+        dialog.container.css('top', _top);
+        dialog.container.css('left', _left);
         dialog.content.html(dialog.options.content);
         if (dialog.options.modal) {
             dialog.modalBox = new $.jqcBlocker();
@@ -221,10 +240,7 @@
 
     var DIALOG_DEFAULT_OPTIONS = {
         modal: true, // is it a modal box. Default is true
-        position: {
-            top: 0,
-            left: 0
-        },
+        position: 'auto',
         width: 680,
         content: null, // content that appended to dialog
         title: null, // dialog title
@@ -296,4 +312,9 @@
         that.container.hide();
         minimizeBarMgr.bindDialog(that);
     };
+
+    $.jqcDialog.prototype.getContainer = function (param) {
+        var that = this;
+        return that.content;
+    }
 }(jQuery));
