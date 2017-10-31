@@ -31,12 +31,15 @@
             if (e.target.className.indexOf('jqcDraggable') < 0) {
                 return;
             }
+            var _position = that.options.movableBox.position();
+            var topGap = e.pageY - window.scrollY - _position.top,
+                leftGap = e.pageX - window.scrollX - _position.left;
             dom.on('mousemove.jqcDraggable', function (e) {
                 var movableBoxH = that.options.movableBox.outerHeight(),
                     movableBoxW = that.options.movableBox.outerWidth();
 
-                var _top = e.pageY - window.scrollY - that.options.dragHandler.outerHeight() / 2,
-                    _left = e.pageX - window.scrollX - that.options.dragHandler.outerWidth() / 2;
+                var _top = e.pageY - window.scrollY - topGap,
+                    _left = e.pageX - window.scrollX - leftGap;
                 _top = _top < 0 ? 0 : _top;
                 _left = _left < -movableBoxW + 50 ? -movableBoxW + 50 : _left;
 
