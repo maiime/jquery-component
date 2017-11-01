@@ -230,7 +230,7 @@
         dialog.content.html(dialog.options.content);
         if (dialog.container.outerHeight() > window.innerHeight) {
             dialog.heightOverflow = true;
-            dialog.content.height(window.innerHeight - 58);
+            dialog.content.height($.jqcDialog.getContainerMaxHeight());
         }
         if (dialog.options.modal) {
             dialog.modalBox = new $.jqcBlocker();
@@ -322,5 +322,9 @@
     $.jqcDialog.prototype.getContainer = function (param) {
         var that = this;
         return that.content;
-    }
+    };
+
+    $.jqcDialog.getContainerMaxHeight = function () {
+        return window.innerHeight - 60;
+    };
 }(jQuery));
