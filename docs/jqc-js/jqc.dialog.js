@@ -228,9 +228,10 @@
         dialog.container.css('top', _top);
         dialog.container.css('left', _left);
         dialog.content.html(dialog.options.content);
+        dialog.content.css("max-height", $.jqcDialog.getContainerMaxHeight() + 5);
         if (dialog.container.outerHeight() > window.innerHeight) {
             dialog.heightOverflow = true;
-            dialog.content.height($.jqcDialog.getContainerMaxHeight());
+            dialog.content.height($.jqcDialog.getContainerMaxHeight() + 5);
         }
         if (dialog.options.modal) {
             dialog.modalBox = new $.jqcBlocker();
