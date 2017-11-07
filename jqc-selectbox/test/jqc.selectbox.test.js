@@ -314,6 +314,82 @@ var pinyinFilterDataSrc = [{
         pinyinFilter: '啊才02'
     }
 ];
+
+
+
+var adaterData = [{
+    id: '000723',
+    name: '建信稳定添利债券C'
+}, {
+    id: '004870',
+    name: '融通创业板指数C'
+}, {
+    id: '000727',
+    name: '融通健康产业灵活配置混合'
+}, {
+    id: '000728',
+    name: '工银目标收益一年定开债券'
+}, {
+    id: '000729',
+    name: '建信中小盘先锋股票'
+}, {
+    id: '002100',
+    name: '国富新活力混合C'
+}, {
+    id: '000720',
+    name: '南方稳利1年定期开放债券C'
+}, {
+    id: '002607',
+    name: '融通增裕债券'
+}, {
+    id: '512300',
+    name: '南方中证500医药卫生ETF'
+}, {
+    id: '513030',
+    name: '华安德国30(DAX)ETF(QDII)'
+}, {
+    id: '512310',
+    name: '南方中证500工业ETF'
+}, {
+    id: '002609',
+    name: '博时泰和债券C'
+}, {
+    id: '002608',
+    name: '博时泰和债券A'
+}, {
+    id: '002603',
+    name: '工银瑞丰纯债半年定开债券'
+}, {
+    id: '002602',
+    name: '易方达丰惠混合'
+}];
+
+var updateDataSrc = [{
+    id: '600050',
+    name: '中国联通'
+}, {
+    id: '600054',
+    name: '黄山旅游'
+}, {
+    id: '600834',
+    name: '申通地铁'
+}, {
+    id: '600016',
+    name: '民生银行'
+}, {
+    id: '000001',
+    name: '上证指数'
+}, {
+    id: '600036',
+    name: '招商银行'
+}, {
+    id: '600837',
+    name: '海通证券'
+}, {
+    id: '002602',
+    name: '易方达丰惠混合'
+}];
+
 /**
  * basic funciton
  */
@@ -322,6 +398,61 @@ new $.jqcSelectBox({
     element: $('#selectboxBasic'),
     dataName: 'basic'
 });
+
+/**
+ * without resetter
+ */
+new $.jqcSelectBox({
+    optionData: basicDataSrc, // data source
+    element: $('#withoutResetter'),
+    dataName: 'basic',
+    withResetter: false
+});
+
+/**
+ * with update datasources
+ */
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterData,
+        adapter: {
+            value: 'id',
+            label: 'name',
+            filter: 'id',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: '002602',
+    element: $('#withUpdateDataResources'),
+    dataName: 'adaterData',
+    updateDataSource: function (callback) {
+        callback(updateDataSrc);
+    },
+
+});
+
+/**
+ * with update datasources & out resetter
+ */
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterData,
+        adapter: {
+            value: 'id',
+            label: 'name',
+            filter: 'id',
+            pinyinFilter: 'name'
+        }
+    },
+    defaultVal: '002602',
+    element: $('#withUpdateOutResetter'),
+    dataName: 'adaterData',
+    updateDataSource: function (callback) {
+        callback(updateDataSrc);
+    },
+    withResetter: false
+});
+
 /**
  * right float & select callback
  */
@@ -417,79 +548,6 @@ new $.jqcSelectBox({
     width: 160,
     supportMultiSelect: true
 });
-
-var adaterData = [{
-    id: '000723',
-    name: '建信稳定添利债券C'
-}, {
-    id: '004870',
-    name: '融通创业板指数C'
-}, {
-    id: '000727',
-    name: '融通健康产业灵活配置混合'
-}, {
-    id: '000728',
-    name: '工银目标收益一年定开债券'
-}, {
-    id: '000729',
-    name: '建信中小盘先锋股票'
-}, {
-    id: '002100',
-    name: '国富新活力混合C'
-}, {
-    id: '000720',
-    name: '南方稳利1年定期开放债券C'
-}, {
-    id: '002607',
-    name: '融通增裕债券'
-}, {
-    id: '512300',
-    name: '南方中证500医药卫生ETF'
-}, {
-    id: '513030',
-    name: '华安德国30(DAX)ETF(QDII)'
-}, {
-    id: '512310',
-    name: '南方中证500工业ETF'
-}, {
-    id: '002609',
-    name: '博时泰和债券C'
-}, {
-    id: '002608',
-    name: '博时泰和债券A'
-}, {
-    id: '002603',
-    name: '工银瑞丰纯债半年定开债券'
-}, {
-    id: '002602',
-    name: '易方达丰惠混合'
-}];
-
-var updateDataSrc = [{
-    id: '600050',
-    name: '中国联通'
-}, {
-    id: '600054',
-    name: '黄山旅游'
-}, {
-    id: '600834',
-    name: '申通地铁'
-}, {
-    id: '600016',
-    name: '民生银行'
-}, {
-    id: '000001',
-    name: '上证指数'
-}, {
-    id: '600036',
-    name: '招商银行'
-}, {
-    id: '600837',
-    name: '海通证券'
-}, {
-    id: '002602',
-    name: '易方达丰惠混合'
-}];
 
 /**
  * adater

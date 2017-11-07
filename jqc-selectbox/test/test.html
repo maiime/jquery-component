@@ -6,23 +6,78 @@
     <title>QUnit Selectbox</title>
     <link rel="stylesheet" href="../../qunit/qunit-2.1.1.css">
     <link rel="stylesheet" href="../css/jqc.selectbox.css">
+    <style type="text/css">
+        div {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 
 <body>
-    <label for="selectboxBasic">Basic : </label><input id="selectboxBasic">
-    <label for="selectboxBasicFilter">Basic with filter : </label><input id="selectboxBasicFilter">
-    <label for="selectboxDefaultAndWidth">Default And Width : </label><input id="selectboxDefaultAndWidth">
-    <label for="selectboxRightSingle">Right Single And Callback: </label><input id="selectboxRightSingle" style="float:right;"><br>
-    <label for="selectboxPinyin">Pinyin : </label><input id="selectboxPinyin">
-    <label for="selectboxPinyinFilter">Pinyin And Filter : </label><input id="selectboxPinyinFilter"><br>
-    <label for="selectboxExtOption">ExtOption : </label><input id="selectboxExtOption">
-    <label for="selectboxMulti">Multiple Select : </label><input id="selectboxMulti">
-    <label for="selectboxAdapter">Adapter : </label><input id="selectboxAdapter"><br>
-    <label for="selectboxFuzzy">Fuzzy Filter : </label><input id="selectboxFuzzy">
-    <label for="selectboxUpdateDataSource">Update Data Source : </label><input id="selectboxUpdateDataSource">
-    <label for="selectboxUpdateSrcExt">Update Data Source With Ext Option and Maximum option count : </label><input id="selectboxUpdateSrcExt">
-    <label for="selectboxRightMulti">Right Multi And Callback: </label><input id="selectboxRightMulti" style="float:right;"><br>
-
+    <div>
+        <label for="selectboxBasic">Basic : </label>
+        <input id="selectboxBasic">
+    </div>
+    <div>
+        <label for="withoutResetter">Basic without resetter : </label>
+        <input id="withoutResetter">
+    </div>
+    <div>
+        <label for="withUpdateDataResources">Update Resources : </label>
+        <input id="withUpdateDataResources">
+    </div>
+    <div>
+        <label for="withUpdateOutResetter">Basic without resetter And without resetter </labuel>
+            <input id="withUpdateOutResetter">
+    </div>
+    <div>
+        <label for="selectboxBasicFilter">Basic with filter : </label>
+        <input id="selectboxBasicFilter">
+    </div>
+    <div>
+        <label for="selectboxDefaultAndWidth">Default And Width : </label>
+        <input id="selectboxDefaultAndWidth">
+    </div>
+    <div>
+        <label for="selectboxRightSingle">Right Single And Callback: </label>
+        <input id="selectboxRightSingle" style="float:right;">
+    </div>
+    <div>
+        <label for="selectboxPinyin">Pinyin : </label>
+        <input id="selectboxPinyin">
+    </div>
+    <div>
+        <label for="selectboxPinyinFilter">Pinyin And Filter : </label>
+        <input id="selectboxPinyinFilter">
+    </div>
+    <div>
+        <label for="selectboxExtOption">ExtOption : </label>
+        <input id="selectboxExtOption">
+    </div>
+    <div>
+        <label for="selectboxMulti">Multiple Select : </label>
+        <input id="selectboxMulti">
+    </div>
+    <div>
+        <label for="selectboxAdapter">Adapter : </label>
+        <input id="selectboxAdapter">
+    </div>
+    <div>
+        <label for="selectboxFuzzy">Fuzzy Filter : </label>
+        <input id="selectboxFuzzy">
+    </div>
+    <div>
+        <label for="selectboxUpdateDataSource">Update Data Source : </label>
+        <input id="selectboxUpdateDataSource">
+    </div>
+    <div>
+        <label for="selectboxUpdateSrcExt">Update Data Source With Ext Option and Maximum option count : </label>
+        <input id="selectboxUpdateSrcExt">
+    </div>
+    <div>
+        <label for="selectboxRightMulti">Right Multi And Callback: </label>
+        <input id="selectboxRightMulti" style="float:right;">
+    </div>
 
     <script src="../../qunit/jquery-3.1.1.js"></script>
     <script src="../../qunit/version.js"></script>

@@ -412,6 +412,7 @@
         element: null,
         supportFuzzyMatch: false,
         filterDelay: 256,
+        withResetter: true, // does need resetter control
         onSelect: null, // call back on selecting event,
         afterSelect: null, // call back after selecting event
         updateDataSource: null, // update data source
@@ -475,7 +476,10 @@
         that.optionUL = $('<ul class="jqcSelectboxOptions">');
         that.optionSelected = $('<ul class="jqcSelectboxSelectedOption"></ul>');
 
-        that.operationBar.append(that.input).append(that.resetter);
+        that.operationBar.append(that.input);
+        if (that.options.withResetter) {
+            that.operationBar.append(that.resetter);
+        }
         if (that.options.updateDataSource) {
             that.operationBar.append(that.refresher);
         }
@@ -669,12 +673,15 @@
                 that.container.hide();
             }
         }
-        that.resetter.click(function (e) {
-            reset(true);
-            if (that.options.postClear) {
-                that.options.postClear();
-            }
-        });
+
+        if (that.options.withResetter) {
+            that.resetter.click(function (e) {
+                reset(true);
+                if (that.options.postClear) {
+                    that.options.postClear();
+                }
+            });
+        }
 
         if (that.options.updateDataSource) {
             that.refresher.click(function (e) {
@@ -699,21 +706,23 @@
         that.refresher = $('<button class="jqcSelectboxRefresher" title="从服务器获取新选项">刷新</button>'); // refresh handler to refresh the data source
         that.optionUL = $('<ul>');
 
-        that.operationBar.append(that.input).append(that.resetter);
+        var inputWidth = that.options.width;
+        that.operationBar.append(that.input);
+        if (that.options.withResetter) {
+            that.operationBar.append(that.resetter);
+        } else {
+            inputWidth += 52;
+        }
         if (that.options.updateDataSource) {
             that.operationBar.append(that.refresher);
+        } else {
+            inputWidth += 52;
         }
         that.container.append(that.operationBar).append(that.optionUL);
         var
             elOuterHeight = that.el.outerHeight(),
             elOuterWidth = that.el.outerWidth();
         that.container.css('width', that.options.width + 116);
-        var inputWidth = 0;
-        if (that.options.updateDataSource) {
-            inputWidth = that.options.width;
-        } else {
-            inputWidth = that.options.width + 52;
-        }
         that.input.css('width', inputWidth);
         that.container.appendTo('body');
 
@@ -829,12 +838,15 @@
                 that.container.hide();
             }
         }
-        that.resetter.click(function (e) {
-            reset(true);
-            if (that.options.postClear) {
-                that.options.postClear();
-            }
-        });
+
+        if (that.options.withResetter) {
+            that.resetter.click(function (e) {
+                reset(true);
+                if (that.options.postClear) {
+                    that.options.postClear();
+                }
+            });
+        }
 
         if (that.options.updateDataSource) {
             that.refresher.click(function (e) {
