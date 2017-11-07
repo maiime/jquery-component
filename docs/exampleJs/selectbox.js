@@ -120,6 +120,27 @@ new $.jqcSelectBox({
     dataName: 'basicAdapter',
     width: 160
 });
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name'
+        }
+    },
+    defaultVal: 'bby',
+    element: $('#addNewItem'),
+    dataName: 'basicAdapter',
+    width: 160,
+    addNewItem: function (callback) {
+        var newItemValue = 'v'.concat(Date.now());
+        var newItem = {
+            code: newItemValue,
+            name: newItemValue
+        };
+        callback(newItem);
+    }
+});
 var pinyinParser = new $.jqcPinyin();
 new $.jqcSelectBox({
     optionData: {
@@ -329,7 +350,7 @@ new $.jqcSelectBox({
     afterSelect: function (result) {
         $('#multiCallbackAfterSelect').text('用户选择了股票：'.concat(JSON.stringify(result)));
     },
-    postClear : function(){
+    postClear: function () {
         console.log("post clear");
     }
 });

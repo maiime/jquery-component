@@ -291,6 +291,17 @@
         this.setup();
     };
 
+    OptionCore.prototype.addNewItem = function (newItem) {
+        var newDataSource = null;
+        if (this.option.source.adapter) {
+            newDataSource = this.option.source.data;
+        } else {
+            newDataSource = this.option.source;
+        }
+        newDataSource.push(newItem);
+        this.updateDataSource(newDataSource);
+    };
+
     OptionCore.prototype.setup = function () {
         var _source = this.option.source;
         if (!_source) {
@@ -417,6 +428,7 @@
         afterSelect: null, // call back after selecting event
         updateDataSource: null, // update data source
         postClear: null, // call back after reset button clicked
+        addNewItem: null, // add new item to options at runtime
         maxOptionCount: DEFAULT_OPTION_COUNT
     };
     $.jqcSelectBox = function (param) {
@@ -473,6 +485,7 @@
         that.input = $('<input placeholder="输入选项值">');
         that.resetter = $('<button class="jqcSelectboxResetter" title="清空当前所选项">重置</button>'); // reset handler to reset value to default
         that.refresher = $('<button class="jqcSelectboxRefresher" title="从服务器获取新选项">刷新</button>'); // refresh handler to refresh the data source
+        that.addNewItem = $('<button class="jqcSelectboxAddNewItem" title="从服务器获取新选项">新增</button>'); // allowed to trigger adding a item to options
         that.optionUL = $('<ul class="jqcSelectboxOptions">');
         that.optionSelected = $('<ul class="jqcSelectboxSelectedOption"></ul>');
 
@@ -482,6 +495,9 @@
         }
         if (that.options.updateDataSource) {
             that.operationBar.append(that.refresher);
+        }
+        if (that.options.addNewItem) {
+            that.operationBar.append(that.addNewItem);
         }
         that.container.append(that.operationBar).append(that.optionUL).append(that.optionGap).append(that.optionSelected);
         var
@@ -696,6 +712,16 @@
                 });
             });
         }
+
+        if (that.options.addNewItem) {
+            that.addNewItem.click(function (e) {
+                that.options.addNewItem(function (newItem) {
+                    if (newItem) {
+                        that.optionCore.addNewItem(newItem);
+                    }
+                });
+            });
+        }
     }
 
     function renderSingleSelect(that) {
@@ -704,9 +730,11 @@
         that.input = $('<input placeholder="输入选项值">');
         that.resetter = $('<button class="jqcSelectboxResetter" title="清空当前所选项">重置</button>'); // reset handler to reset value to default
         that.refresher = $('<button class="jqcSelectboxRefresher" title="从服务器获取新选项">刷新</button>'); // refresh handler to refresh the data source
+        that.addNewItem = $('<button class="jqcSelectboxAddNewItem" title="从服务器获取新选项">新增</button>'); // allowed to trigger adding a item to options
         that.optionUL = $('<ul>');
 
-        var inputWidth = that.options.width;
+        var inputWidth = containerWidth = that.options.width;
+        containerWidth += 64;
         that.operationBar.append(that.input);
         if (that.options.withResetter) {
             that.operationBar.append(that.resetter);
@@ -715,14 +743,17 @@
         }
         if (that.options.updateDataSource) {
             that.operationBar.append(that.refresher);
-        } else {
-            inputWidth += 52;
+            containerWidth += 52;
+        }
+        if (that.options.addNewItem) {
+            that.operationBar.append(that.addNewItem);
+            containerWidth += 52;
         }
         that.container.append(that.operationBar).append(that.optionUL);
         var
             elOuterHeight = that.el.outerHeight(),
             elOuterWidth = that.el.outerWidth();
-        that.container.css('width', that.options.width + 116);
+        that.container.css('width', containerWidth);
         that.input.css('width', inputWidth);
         that.container.appendTo('body');
 
@@ -858,6 +889,16 @@
                         that.optionCore.updateDataSource(newDataSource);
                     }
                     reset(false);
+                });
+            });
+        }
+
+        if (that.options.addNewItem) {
+            that.addNewItem.click(function (e) {
+                that.options.addNewItem(function (newItem) {
+                    if (newItem) {
+                        that.optionCore.addNewItem(newItem);
+                    }
                 });
             });
         }

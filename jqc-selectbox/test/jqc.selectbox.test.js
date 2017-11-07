@@ -432,6 +432,22 @@ new $.jqcSelectBox({
 });
 
 /**
+ * basic funciton
+ */
+new $.jqcSelectBox({
+    optionData: basicDataSrc, // data source
+    element: $('#addNewItem'),
+    dataName: 'basic',
+    addNewItem: function (callback) {
+        var newItem = {
+            value: 'v'.concat(Date.now()),
+            label: 'v'.concat(Date.now())
+        };
+        callback(newItem);
+    }
+});
+
+/**
  * with update datasources & out resetter
  */
 new $.jqcSelectBox({

@@ -21,7 +21,9 @@
 </head>
 
 <body>
-    <div class="catalog"><a href="index.html">主目录 >>></a></div>
+    <div class="catalog">
+        <a href="index.html">主目录 >>></a>
+    </div>
     <div class="title">SelectBox</div>
     <section>
         <div class="sectionTitle">功能</div>
@@ -63,7 +65,8 @@
                 </tr>
                 <tr>
                     <td>optionData</td>
-                    <td>JSON Array,<br>JSON Object</td>
+                    <td>JSON Array,
+                        <br>JSON Object</td>
                     <td></td>
                     <td>合法的数据类型</td>
                     <td></td>
@@ -71,7 +74,8 @@
                 </tr>
                 <tr>
                     <td>extOption</td>
-                    <td>JSON Array,<br>JSON Object</td>
+                    <td>JSON Array,
+                        <br>JSON Object</td>
                     <td></td>
                     <td>合法的数据类型，数据模型须与optionData中的数据模型一致。</td>
                     <td></td>
@@ -87,7 +91,8 @@
                 </tr>
                 <tr>
                     <td>defaultVal</td>
-                    <td>String,<br>Integer</td>
+                    <td>String,
+                        <br>Integer</td>
                     <td></td>
                     <td>合法数据值</td>
                     <td></td>
@@ -181,6 +186,14 @@
                     <td>true</td>
                     <td>是否显示重置按钮</td>
                 </tr>
+                <tr>
+                    <td>addNewItem</td>
+                    <td>function</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>允许用户运行时添加新的选项</td>
+                </tr>
             </tbody>
         </table>
     </section>
@@ -188,7 +201,9 @@
         <div class="sectionTitle">示例</div>
         <section>
             <div class="exampleTitle">标准数据模型，无需适配参数，基于label字段进行筛选。</div>
-            <div><input id="basic"></div>
+            <div>
+                <input id="basic">
+            </div>
             <pre class="prettyprint linenums">
 var basicModel = [{
     value: 'aal',
@@ -220,7 +235,9 @@ new $.jqcSelectBox({
         </section>
         <section>
             <div class="exampleTitle">非标准数据模型，使用适配参数，基于name字段进行筛选。</div>
-            <div><input id="basicAdapter"></div>
+            <div>
+                <input id="basicAdapter">
+            </div>
             <pre class="prettyprint linenums">
 var datasource = [{
     code: 'aal',
@@ -321,7 +338,9 @@ new $.jqcSelectBox({
         </section>
         <section>
             <div class="exampleTitle">非标准数据模型，使用适配参数，同时对code、name字段，以及name字段中的中文首字母进行筛选。</div>
-            <div><input id="AdavanceAdapter"></div>
+            <div>
+                <input id="AdavanceAdapter">
+            </div>
             <pre class="prettyprint linenums">
 // 继续引用数据源datasource
 var pinyinParser = new $.jqcPinyin();
@@ -346,7 +365,9 @@ new $.jqcSelectBox({
         </section>
         <section>
             <div class="exampleTitle">增加扩展选项</div>
-            <div><input id="extOption"></div>
+            <div>
+                <input id="extOption">
+            </div>
             <pre class="prettyprint linenums">
 // 继续引用数据源datasource
 var pinyinParser = new $.jqcPinyin();
@@ -374,8 +395,40 @@ new $.jqcSelectBox({
         </pre>
         </section>
         <section>
+            <div class="exampleTitle">运行时添加新选项,本demo每次都会新增v开头的选项</div>
+            <div>
+                <input id="addNewItem">
+            </div>
+            <pre class="prettyprint linenums">
+// 继续引用数据源datasource
+new $.jqcSelectBox({
+    optionData: {
+        data: datasource,
+        adapter: {
+            value: 'code',
+            label: 'name'
+        }
+    },
+    defaultVal: 'bby',
+    element: $('#addNewItem'),
+    dataName: 'basicAdapter',
+    width: 160,
+    addNewItem: function (callback) {
+        var newItemValue = 'v'.concat(Date.now());
+        var newItem = {
+            code: newItemValue,
+            name: newItemValue
+        };
+        callback(newItem);
+    }
+});
+        </pre>
+        </section>
+        <section>
             <div class="exampleTitle">支持多选</div>
-            <div><input id="multi"></div>
+            <div>
+                <input id="multi">
+            </div>
             <pre class="prettyprint linenums">
 // 继续引用数据源datasource
 var pinyinParser = new $.jqcPinyin();
@@ -401,7 +454,10 @@ new $.jqcSelectBox({
         </section>
         <section>
             <div class="exampleTitle">运行时选项更新、不同组件共享一份选项模型</div>
-            <div><input id="runtimeUpdate"><input id="brother"></div>
+            <div>
+                <input id="runtimeUpdate">
+                <input id="brother">
+            </div>
             <pre class="prettyprint linenums">
 // 继续引用数据源datasource
 var pinyinParser = new $.jqcPinyin();
@@ -491,7 +547,9 @@ new $.jqcSelectBox({
         </section>
         <section>
             <div class="exampleTitle">任意位置匹配</div>
-            <div><input id="fuzzy"></div>
+            <div>
+                <input id="fuzzy">
+            </div>
             <pre class="prettyprint linenums">
 // 继续引用数据源datasource
 var pinyinParser = new $.jqcPinyin();
@@ -518,7 +576,9 @@ new $.jqcSelectBox({
         <section>
             <div class="exampleTitle">单选时，选择事件回调</div>
             <p id="singleCallbackOnSelect">改变选择时的结果显示</p>
-            <div><input id="singleCallback"></div>
+            <div>
+                <input id="singleCallback">
+            </div>
             <pre class="prettyprint linenums">
 // 继续引用数据源datasource
 var pinyinParser = new $.jqcPinyin();
@@ -549,7 +609,9 @@ new $.jqcSelectBox({
             <div class="exampleTitle">多选时，选择事件回调，重置事件回调</div>
             <p id="multiCallbackOnSelect">改变选择时的结果显示</p>
             <p id="multiCallbackAfterSelect">选择完毕后的回调结果显示</p>
-            <div><input id="multiCallback"></div>
+            <div>
+                <input id="multiCallback">
+            </div>
             <pre class="prettyprint linenums">
 // 继续引用数据源datasource
 var pinyinParser = new $.jqcPinyin();
