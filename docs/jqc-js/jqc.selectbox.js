@@ -715,6 +715,7 @@
 
         if (that.options.addNewItem) {
             that.addNewItem.click(function (e) {
+                that.container.hide();
                 that.options.addNewItem(function (newItem) {
                     if (newItem) {
                         that.optionCore.addNewItem(newItem);
@@ -895,6 +896,7 @@
 
         if (that.options.addNewItem) {
             that.addNewItem.click(function (e) {
+                that.container.hide();
                 that.options.addNewItem(function (newItem) {
                     if (newItem) {
                         that.optionCore.addNewItem(newItem);
