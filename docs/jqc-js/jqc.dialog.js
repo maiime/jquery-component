@@ -19,10 +19,11 @@
  * Dependent on
  *  + jqc.baseElement.js
  *  + jqc.draggable.js
+ *  + jqc.resizeable.js
  */
 (function ($) {
-    if (undefined == $.jqcBaseElement || undefined == $.jqcLang || undefined == $.jqcDraggable) {
-        throw new Error("Need library : jqc.baseElement.js,$.jqc.lang.js,jqc.draggable.js");
+    if (undefined == $.jqcBaseElement || undefined == $.jqcLang || undefined == $.jqcDraggable || undefined == $.jqcResizeable) {
+        throw new Error("Need library : jqc.baseElement.js,$.jqc.lang.js,jqc.draggable.js,jqc.resizeable.js");
     }
 
     function MinimizeBar(param) {
@@ -169,8 +170,10 @@
 
         dialog.content = $('<div class="jqcDialogContent">');
 
+        dialog.resizeHandleE = $('<div class="jqcDialogResizeHandleE" title="resize">');
+
         dialog.container = $('<div class="jqcDialogContainer" style="display:none;">');
-        dialog.container.append(dialog.titleBar).append(dialog.content).appendTo('body');
+        dialog.container.append(dialog.titleBar).append(dialog.content).append(dialog.resizeHandleE).appendTo('body');
     }
 
     function bindEventForDialog(dialog) {
@@ -196,6 +199,12 @@
         new $.jqcDraggable({
             dragHandler: dialog.titleBar,
             movableBox: dialog.container
+        });
+
+        new $.jqcResizeable({
+            dragHandler: dialog.resizeHandleE,
+            resizeableBox: dialog.container,
+            minWidth: dialog.options.width
         });
     }
 
