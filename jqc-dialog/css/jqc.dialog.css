@@ -62,3 +62,12 @@
     overflow: auto;
     background-color: #FFFFFF;
 }
+
+.jqcDialogResizeHandleE {
+    top: 0px;
+    right: 0px;
+    width: 3px;
+    height: 100%;
+    cursor: e-resize;
+    position: absolute;
+}
