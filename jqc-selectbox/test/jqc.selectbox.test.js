@@ -315,7 +315,19 @@ var pinyinFilterDataSrc = [{
     }
 ];
 
-
+var adaterMultiPinyinData = [{
+    id: '000723',
+    name: '建信稳定添利债券C',
+    alias: '工商银行'
+}, {
+    id: '004870',
+    name: '融通创业板指数C',
+    alias: '建设银行'
+}, {
+    id: '000727',
+    name: '融通健康产业灵活配置混合',
+    alias: '招商银行'
+}];
 
 var adaterData = [{
     id: '000723',
@@ -431,6 +443,7 @@ new $.jqcSelectBox({
 
 });
 
+
 /**
  * basic funciton
  */
@@ -514,6 +527,51 @@ new $.jqcSelectBox({
     dataName: 'basicPinyin',
     supportPinYin: true,
     pinyinParser: pinyinParser
+});
+
+/**
+ * multipinyin
+ */
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterMultiPinyinData,
+        adapter: {
+            value: 'id',
+            label: function (data) {
+                return data.name.concat(' ').concat(data.alias);
+            },
+            filter: 'id',
+            pinyinFilter: ['name', 'alias']
+        }
+    },
+    defaultVal: '002602',
+    element: $('#supportMultiPinyin'),
+    dataName: 'adaterMultiPinyinData',
+    supportPinYin: true,
+    pinyinParser: pinyinParser
+});
+
+/**
+ * multipinyin with fuzzy
+ */
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterMultiPinyinData,
+        adapter: {
+            value: 'id',
+            label: function (data) {
+                return data.name.concat(' ').concat(data.alias);
+            },
+            filter: 'id',
+            pinyinFilter: ['name', 'alias']
+        }
+    },
+    defaultVal: '002602',
+    element: $('#supportMultiPinyinFuzzy'),
+    dataName: 'supportMultiPinyinFuzzy',
+    supportPinYin: true,
+    pinyinParser: pinyinParser,
+    supportFuzzyMatch: true
 });
 
 /**

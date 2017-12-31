@@ -54,7 +54,7 @@
      *  value : literal,
      *  label : literal or function,
      *  filter : literal,
-     *  pinyinFilter : literal
+     *  pinyinFilter : literal or field string array
      * }
      * 
      * @param {*} param 
@@ -382,15 +382,22 @@
             fillMap(mapping, filterKey, packageData);
             unSorted.push(filterKey);
             if (this.option.supportPinYin) {
-                var cnFilterKey = _data[keyPinyinFilter].toString();
-                if (cnFilterKey != filterKey) {
-                    fillMap(mapping, cnFilterKey, packageData);
-                    unSorted.push(cnFilterKey);
-                }
-                var pinyinFilterKey = this.option.pinyinParser.firstAlphabet(cnFilterKey);
-                if (filterKey != pinyinFilterKey && cnFilterKey != pinyinFilterKey) {
-                    fillMap(mapping, pinyinFilterKey, packageData);
-                    unSorted.push(pinyinFilterKey);
+                if ('string' == typeof (keyPinyinFilter)) {
+                    var cnFilterKey = _data[keyPinyinFilter].toString();
+                    indexPYFilter(filterKey, cnFilterKey, mapping, packageData, unSorted, this);
+                } else {
+                    if (this.option.supportFuzzyMatch) {
+                        var cnFilterKey = "";
+                        for (var _pyFilter in keyPinyinFilter) {
+                            cnFilterKey = cnFilterKey.concat(_data[keyPinyinFilter[_pyFilter]].toString())
+                        }
+                        indexPYFilter(filterKey, cnFilterKey, mapping, packageData, unSorted, this);
+                    } else {;
+                        for (var _pyFilter in keyPinyinFilter) {
+                            var cnFilterKey = _data[keyPinyinFilter[_pyFilter]].toString();
+                            indexPYFilter(filterKey, cnFilterKey, mapping, packageData, unSorted, this);
+                        }
+                    }
                 }
             }
             this.optionMapping.set(_data[keyVal].toString(), packageData);
@@ -410,6 +417,18 @@
             });
         }
     };
+
+    function indexPYFilter(filterKey, cnFilterKey, mapping, packageData, unSorted, that) {
+        if (cnFilterKey != filterKey) {
+            fillMap(mapping, cnFilterKey, packageData);
+            unSorted.push(cnFilterKey);
+        }
+        var pinyinFilterKey = that.option.pinyinParser.firstAlphabet(cnFilterKey);
+        if (filterKey != pinyinFilterKey && cnFilterKey != pinyinFilterKey) {
+            fillMap(mapping, pinyinFilterKey, packageData);
+            unSorted.push(pinyinFilterKey);
+        }
+    }
 
     var BOX_DEFAULT_OPTIONS = {
         dataName: null, // for the same data type, in one application, should have the same name

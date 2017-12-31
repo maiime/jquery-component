@@ -31,7 +31,7 @@
             <li>下拉框组件</li>
             <li>能通过筛选进行快速选择</li>
             <li>前匹配或者任意位置匹配模式</li>
-            <li>额外支持中文首字母匹配</li>
+            <li>额外支持单字段或者多字段中文首字母匹配</li>
             <li>可单选亦可多选</li>
             <li>JSON数据对象</li>
             <li>零侵入式数据模型</li>
@@ -357,6 +357,46 @@ new $.jqcSelectBox({
     defaultVal: 'bby',
     element: $('#AdavanceAdapter'),
     dataName: 'AdavanceAdapter',
+    width: 160,
+    supportPinYin: true,
+    pinyinParser: pinyinParser
+});
+        </pre>
+        </section>
+        <section>
+            <div class="exampleTitle">非标准数据模型，使用适配参数，同时对id、name,alias字段，以及name,alias字段中的中文首字母进行筛选。</div>
+            <div>
+                <input id="multiPinyinData">
+            </div>
+            <pre class="prettyprint linenums">
+var adaterMultiPinyinData = [{
+    id: '000723',
+    name: '建信稳定添利债券C',
+    alias: '工商银行'
+}, {
+    id: '004870',
+    name: '融通创业板指数C',
+    alias: '建设银行'
+}, {
+    id: '000727',
+    name: '融通健康产业灵活配置混合',
+    alias: '招商银行'
+}];
+new $.jqcSelectBox({
+    optionData: {
+        data: adaterMultiPinyinData,
+        adapter: {
+            value: 'id',
+            label: function (data) {
+                return data.name.concat(' ').concat(data.alias);
+            },
+            filter: 'id',
+            pinyinFilter: ['name', 'alias']
+        }
+    },
+    defaultVal: '000727',
+    element: $('#AdavanceAdapter'),
+    dataName: 'adaterMultiPinyinData',
     width: 160,
     supportPinYin: true,
     pinyinParser: pinyinParser
