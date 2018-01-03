@@ -43,7 +43,6 @@
                 var changeWidth = endX - startX;
                 changeWidth = maxAllowedChange < changeWidth ? maxAllowedChange : changeWidth;
 
-                console.log(oldWidth);
                 var resizedWidth = oldWidth + changeWidth;
                 if (that.options.minWidth && resizedWidth < that.options.minWidth) {
                     resizedWidth = that.options.minWidth;

@@ -18,10 +18,6 @@
  */
 (function ($) {
     $JqcLoader.importComponents('com.lifeonwalden.jqc', ['baseElement', 'zindex']).execute(function () {
-        if (undefined == $.jqcBaseElement || undefined == $.jqcZindex) {
-            throw new Error("Need library : jqc.baseElement.js,jqc.zindex.js");
-        }
-
         const BLOCKER_CACHE = [];
         $.jqcBlocker = function (param) {
             var that = BLOCKER_CACHE.pop();

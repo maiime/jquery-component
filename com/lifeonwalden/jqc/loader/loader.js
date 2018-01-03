@@ -179,9 +179,9 @@
             throw new Error('Module ['.concat(moduleName).concat(']').concat('is not registered'));
         }
 
-        var cmp = module.getComponent(cmpName);
+        var cmp = module.getComponent(componentName);
         if (!cmp) {
-            throw new Error('Component ['.concat(cmpName).concat(']').concat('is not registered'));
+            throw new Error('Component ['.concat(componentName).concat(']').concat('is not registered'));
         }
 
         return cmp.getURL();
