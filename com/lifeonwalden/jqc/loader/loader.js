@@ -122,6 +122,7 @@
         this.cmpStack = [];
         this.jsStack = [];
         this.cssStack = [];
+        this.resources = [];
     }
 
     Loader.prototype.registerModule = function (m) {
@@ -129,7 +130,7 @@
     };
 
     Loader.prototype.importScript = function (url) {
-        this.jsStack.push({
+        this.jsStack.unshift({
             url: url,
             type: TYPE_JS
         });
@@ -138,7 +139,7 @@
     };
 
     Loader.prototype.importCss = function (url) {
-        this.cssStack.push({
+        this.cssStack.unshift({
             url: url,
             type: TYPE_CSS
         });
@@ -163,7 +164,7 @@
                 continue;
             }
 
-            this.cmpStack.push({
+            this.cmpStack.unshift({
                 url: cmp.getURL().concat(cmpName).concat('.js'),
                 type: TYPE_CMP,
                 cmp: cmp
@@ -188,24 +189,23 @@
     };
 
     Loader.prototype.execute = function (fun) {
-        var resources = [];
-        for (var cmp = this.cmpStack.shift(); cmp; cmp = this.cmpStack.shift()) {
-            resources.push(cmp);
-        }
-        for (var css = this.cssStack.shift(); css; css = this.cssStack.shift()) {
-            resources.push(css);
-        }
-        for (var js = this.jsStack.shift(); js; js = this.jsStack.shift()) {
-            resources.push(js);
-        }
         if (fun) {
-            resources.push({
+            this.resources.unshift({
                 fun: fun,
                 type: TYPE_FUN
             });
         }
+        for (var js = this.jsStack.shift(); js; js = this.jsStack.shift()) {
+            this.resources.unshift(js);
+        }
+        for (var css = this.cssStack.shift(); css; css = this.cssStack.shift()) {
+            this.resources.unshift(css);
+        }
+        for (var cmp = this.cmpStack.shift(); cmp; cmp = this.cmpStack.shift()) {
+            this.resources.unshift(cmp);
+        }
 
-        loadResource(resources);
+        loadResource(this.resources);
     };
 
     function loadResource(resources) {
