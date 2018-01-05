@@ -188,11 +188,12 @@
         return cmp.getURL();
     };
 
-    Loader.prototype.execute = function (fun) {
+    Loader.prototype.execute = function (fun, param) {
         if (fun) {
             this.resources.unshift({
                 fun: fun,
-                type: TYPE_FUN
+                type: TYPE_FUN,
+                param: param
             });
         }
         for (var js = this.jsStack.shift(); js; js = this.jsStack.shift()) {
@@ -236,7 +237,7 @@
                 css.addEventListener('load', fun);
                 document.getElementsByTagName('head')[0].appendChild(css);
             } else {
-                resource.fun();
+                resource.fun(resource.param);
             }
         }
     }
