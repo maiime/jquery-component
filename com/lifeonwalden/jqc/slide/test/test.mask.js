@@ -11,6 +11,7 @@ $JqcLoader.importScript('../../../../../qunit/jquery-3.1.1.js')
         $JqcLoader.importComponents('com.lifeonwalden.jqc', ['slide']).execute(function () {
             var slide = new $.jqcSlide({
                 container: $('.slide'),
+                mask: $('.mask'),
                 slides: [{
                     type: 'img',
                     url: 'img/nature.jpg',
